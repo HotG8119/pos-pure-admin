@@ -1,0 +1,43 @@
+buttons:
+  hsLoginOut: 退出系統
+  hsfullscreen: 全螢幕
+  hsexitfullscreen: 退出全螢幕
+  hsrefreshRoute: 刷新路由
+  hslogin: 登入
+  hsadd: 新增
+  hsmark: 標記/取消
+  hssave: 儲存
+  hssearch: 搜尋
+  hsexpendAll: 全部展開
+  hscollapseAll: 全部折疊
+  hssystemSet: 開啟專案配置
+  hsdelete: 刪除
+  hsreload: 重新載入
+  hscloseCurrentTab: 關閉目前標籤頁
+  hscloseLeftTabs: 關閉左側標籤頁
+  hscloseRightTabs: 關閉右側標籤頁
+  hscloseOtherTabs: 關閉其他標籤頁
+  hscloseAllTabs: 關閉全部標籤頁
+  hswholeFullScreen: 全螢幕
+  hswholeExitFullScreen: 退出全螢幕
+  hscontentFullScreen: 內容區全螢幕
+  hscontentExitFullScreen: 內容區退出全螢幕
+menus:
+  hshome: 首頁
+  hslogin: 登入
+  hsabnormal: 異常頁面
+  hsfourZeroFour: "404"
+  hsfourZeroOne: "403"
+  hsFive: "500"
+  permission: 權限管理
+  permissionPage: 頁面權限
+  permissionButton: 按鈕權限
+status:
+  hsLoad: 載入中...
+login:
+  username: 帳號
+  password: 密碼
+  login: 登入
+  usernameReg: 請輸入帳號
+  passwordReg: 請輸入密碼
+  passwordRuleReg: 密碼格式應為8-18位數字、字母、符號的任意兩種組合
