@@ -36,6 +36,7 @@ export type setType = {
 };
 
 export type userType = {
+  userId?: number;
   username?: string;
   roles?: Array<string>;
   verifyCode?: string;

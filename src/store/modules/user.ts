@@ -12,6 +12,8 @@ import { type DataInfo, setToken, removeToken, sessionKey } from "@/utils/auth";
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
+    // 用户ID
+    userId: storageSession().getItem<DataInfo<number>>(sessionKey)?.userId ?? 0,
     // 用户名
     username:
       storageSession().getItem<DataInfo<number>>(sessionKey)?.username ?? "",
@@ -19,6 +21,10 @@ export const useUserStore = defineStore({
     roles: storageSession().getItem<DataInfo<number>>(sessionKey)?.roles ?? []
   }),
   actions: {
+    /** 存储用户ID */
+    SET_USERID(userId: number) {
+      this.userId = userId;
+    },
     /** 存储用户名 */
     SET_USERNAME(username: string) {
       this.username = username;

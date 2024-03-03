@@ -3,6 +3,7 @@ import { storageSession } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 
 export interface DataInfo<T> {
+  userId: number;
   /** token */
   accessToken: string;
   /** `accessToken`的过期时间（时间戳） */
@@ -44,26 +45,34 @@ export function setToken(data: DataInfo<Date>) {
       })
     : Cookies.set(TokenKey, cookieString);
 
-  function setSessionKey(username: string, roles: Array<string>) {
+  function setSessionKey(
+    userId: number,
+    username: string,
+    roles: Array<string>
+  ) {
+    useUserStoreHook().SET_USERID(userId);
     useUserStoreHook().SET_USERNAME(username);
     useUserStoreHook().SET_ROLES(roles);
     storageSession().setItem(sessionKey, {
       refreshToken,
       expires,
+      userId,
       username,
       roles
     });
   }
 
-  if (data.username && data.roles) {
-    const { username, roles } = data;
-    setSessionKey(username, roles);
+  if (data.userId && data.username && data.roles) {
+    const { userId, username, roles } = data;
+    setSessionKey(userId, username, roles);
   } else {
+    const userId =
+      storageSession().getItem<DataInfo<number>>(sessionKey)?.userId ?? 0;
     const username =
       storageSession().getItem<DataInfo<number>>(sessionKey)?.username ?? "";
     const roles =
       storageSession().getItem<DataInfo<number>>(sessionKey)?.roles ?? [];
-    setSessionKey(username, roles);
+    setSessionKey(userId, username, roles);
   }
 }
 
