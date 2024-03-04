@@ -52,6 +52,7 @@ export const useUserStore = defineStore({
     },
     /** 前端登出（不调用接口） */
     logOut() {
+      this.userId = 0;
       this.username = "";
       this.roles = [];
       removeToken();
