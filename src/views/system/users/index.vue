@@ -5,8 +5,9 @@ import { tableDataMore } from "./data";
 import { message } from "@/utils/message";
 import { storageLocal } from "@pureadmin/utils";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
-import { getUserList, switchUserRole } from "@/api/system";
+import { getUserList, switchUserRole, deleteUser } from "@/api/system";
 import { initRouter } from "@/router/utils";
 
 const svg = `
@@ -80,16 +81,6 @@ const changeRole = async (id: number) => {
     message("admin帳號不能切換權限", { type: "error" });
     return;
   }
-  // switchUserRole(id).then(res => {
-  //   console.log("切換權限", res);
-  //   if (res.success) {
-  //     const index = userData.value.findIndex((item: any) => item.id === id);
-  //     userData.value[index].isAdmin =
-  //       userData.value[index].isAdmin === "是" ? "否" : "是";
-  //     message(`ID：${id} 權限切換成功`, { type: "success" });
-  //   }
-  // });
-
   try {
     const res = await switchUserRole(id);
     console.log("切換權限", res);
@@ -110,6 +101,26 @@ const changeRole = async (id: number) => {
     message(`ID：${id} 權限切換失敗`, { type: "error" });
   } catch (err) {
     message("切換權限錯誤", { type: "error" });
+  }
+};
+
+const handleDelete = async row => {
+  if (row.name === "admin") {
+    message("admin帳號不能被刪除", { type: "error" });
+    return;
+  }
+  try {
+    const res = await deleteUser(row.id);
+    if (res.success) {
+      message(`ID：${row.id} 使用者刪除成功`, { type: "success" });
+      const index = userData.value.findIndex((item: any) => item.id === row.id);
+      userData.value.splice(index, 1);
+      return;
+    }
+
+    message(`ID：${row.id} 使用者刪除失敗`, { type: "error" });
+  } catch (err) {
+    message("使用者刪除錯誤", { type: "error" });
   }
 };
 
@@ -159,31 +170,31 @@ const changeRole = async (id: number) => {
             修改密碼
           </el-button>
 
-          <!-- <el-popconfirm
-            :title="`是否刪除ID為 ${row.id} 的使用者資料?`"
+          <el-popconfirm
+            :title="`是否刪除ID：${row.id} 的使用者資料?`"
             @confirm="handleDelete(row)"
           >
             <template #reference>
               <el-button
                 class="reset-margin"
                 link
-                type="primary"
-                :size="size"
-                :icon="useRenderIcon(Delete)"
+                type="danger"
+                size="small"
+                icon="material-symbols:delete-outline"
               >
                 删除
               </el-button>
             </template>
-          </el-popconfirm> -->
+          </el-popconfirm>
 
-          <el-button
+          <!-- <el-button
             link
             type="danger"
             size="small"
             @click.prevent="deleteRow(row.id)"
           >
             刪除帳號
-          </el-button>
+          </el-button> -->
         </template>
       </pure-table>
       <el-button class="mt-4" style="width: 100%" @click="onAddItem">

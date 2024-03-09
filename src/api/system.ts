@@ -32,27 +32,31 @@ export const switchUserRole = (id: number) => {
   return http.request<Result>("put", baseUrlApi(`users/${id}`));
 };
 
-/** 用户管理-获取所有角色列表 */
-export const getAllRoleList = () => {
-  return http.request<Result>("get", "/list-all-role");
+export const deleteUser = (id: number) => {
+  return http.request<Result>("delete", baseUrlApi(`users/${id}`));
 };
 
-/** 用户管理-根据userId，获取对应角色id列表（userId：用户id） */
-export const getRoleIds = (data?: object) => {
-  return http.request<Result>("post", "/list-role-ids", { data });
-};
+// /** 用户管理-获取所有角色列表 */
+// export const getAllRoleList = () => {
+//   return http.request<Result>("get", "/list-all-role");
+// };
 
-/** 获取角色管理列表 */
-export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", "/role", { data });
-};
+// /** 用户管理-根据userId，获取对应角色id列表（userId：用户id） */
+// export const getRoleIds = (data?: object) => {
+//   return http.request<Result>("post", "/list-role-ids", { data });
+// };
 
-/** 获取部门管理列表 */
-export const getDeptList = (data?: object) => {
-  return http.request<Result>("post", "/dept", { data });
-};
+// /** 获取角色管理列表 */
+// export const getRoleList = (data?: object) => {
+//   return http.request<ResultTable>("post", "/role", { data });
+// };
 
-/** 获取菜单管理列表 */
-export const getMenuList = (data?: object) => {
-  return http.request<Result>("post", "/menu", { data });
-};
+// /** 获取部门管理列表 */
+// export const getDeptList = (data?: object) => {
+//   return http.request<Result>("post", "/dept", { data });
+// };
+
+// /** 获取菜单管理列表 */
+// export const getMenuList = (data?: object) => {
+//   return http.request<Result>("post", "/menu", { data });
+// };
