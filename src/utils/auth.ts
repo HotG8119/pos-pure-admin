@@ -10,7 +10,7 @@ export interface DataInfo<T> {
   /** 用于调用刷新accessToken的接口时所需的token */
   refreshToken: string;
   /** 用户ID */
-  userId: number;
+  userId?: number;
   /** 用户名 */
   username?: string;
   /** 当前登陆用户的角色 */

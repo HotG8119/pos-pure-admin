@@ -49,8 +49,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("ruleForm.username: ", ruleForm.username);
-      console.log("ruleForm.password: ", ruleForm.password);
+      console.log("login submit!!!", ruleForm);
       useUserStoreHook()
         .loginByUsername({
           username: ruleForm.username,
