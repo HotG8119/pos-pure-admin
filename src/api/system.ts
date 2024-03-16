@@ -29,7 +29,13 @@ export const getUserList = () => {
 };
 
 export const switchUserRole = (id: number) => {
-  return http.request<Result>("put", baseUrlApi(`users/${id}`));
+  return http.request<Result>("put", baseUrlApi(`users/role/${id}`));
+};
+
+export const patchUserInfo = (id: number, data: object) => {
+  return http.request<Result>("put", baseUrlApi(`users/info/${id}`), {
+    data
+  });
 };
 
 export const deleteUser = (id: number) => {

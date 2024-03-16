@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import dayjs from "dayjs";
 import { tableDataMore } from "./data";
+import { useUser } from "./utils/hook";
 import { message } from "@/utils/message";
 import { storageLocal } from "@pureadmin/utils";
 import { usePermissionStoreHook } from "@/store/modules/permission";
@@ -9,6 +10,22 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 import { getUserList, switchUserRole, deleteUser } from "@/api/system";
 import { initRouter } from "@/router/utils";
+import { useUserStoreHook } from "@/store/modules/user";
+
+import Upload from "@iconify-icons/ri/upload-line";
+import Role from "@iconify-icons/ri/admin-line";
+import Password from "@iconify-icons/ri/lock-password-line";
+import More from "@iconify-icons/ep/more-filled";
+import Delete from "@iconify-icons/ep/delete";
+import EditPen from "@iconify-icons/ep/edit-pen";
+import Refresh from "@iconify-icons/ep/refresh";
+import AddFill from "@iconify-icons/ri/add-circle-line";
+
+const treeRef = ref();
+const formRef = ref();
+const tableRef = ref();
+
+const { openDialog } = useUser(tableRef, treeRef);
 
 const svg = `
         <path class="path" d="
@@ -124,6 +141,24 @@ const handleDelete = async row => {
   }
 };
 
+const changePassword = row => {
+  const userId = useUserStoreHook().userId;
+  if (row.id !== userId) {
+    message("不能修改非自己的密碼", { type: "error" });
+    return;
+  }
+
+  useUser().changePassword(row);
+};
+
+const modifyUserData = row => {
+  const userId = useUserStoreHook().userId;
+  if (row.id !== userId) {
+    message("只能修改自己的資料", { type: "error" });
+    return;
+  }
+  openDialog("修改", row);
+};
 // const now = new Date();
 // const tableData = ref(tableDataMore);
 
@@ -151,12 +186,16 @@ const handleDelete = async row => {
       :element-loading-svg="svg"
       element-loading-svg-view-box="-10, -10, 50, 50"
     >
+      <el-button class="mb-4" style="width: 100%" @click="openDialog('新增')">
+        新增員工
+      </el-button>
       <pure-table :data="userData" :columns="columns" maxHeight="800">
         <template #operation="{ row }">
           <el-button
             link
             type="primary"
             size="small"
+            :icon="useRenderIcon(Role)"
             @click.prevent="changeRole(row.id)"
           >
             切換權限
@@ -165,9 +204,21 @@ const handleDelete = async row => {
             link
             type="primary"
             size="small"
-            @click.prevent="deleteRow(row.id)"
+            :icon="useRenderIcon(EditPen)"
+            @click.prevent="changePassword(row)"
           >
             修改密碼
+          </el-button>
+
+          <el-button
+            class="reset-margin"
+            link
+            type="primary"
+            size="small"
+            :icon="useRenderIcon(EditPen)"
+            @click="openDialog('修改', row)"
+          >
+            修改資料
           </el-button>
 
           <el-popconfirm
@@ -180,7 +231,7 @@ const handleDelete = async row => {
                 link
                 type="danger"
                 size="small"
-                icon="material-symbols:delete-outline"
+                :icon="useRenderIcon(Delete)"
               >
                 删除
               </el-button>
@@ -197,9 +248,7 @@ const handleDelete = async row => {
           </el-button> -->
         </template>
       </pure-table>
-      <el-button class="mt-4" style="width: 100%" @click="onAddItem">
-        Add Item
-      </el-button>
+
       <!-- <el-empty
         v-show="
           productList
