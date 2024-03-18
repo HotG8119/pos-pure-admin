@@ -25,7 +25,7 @@ const treeRef = ref();
 const formRef = ref();
 const tableRef = ref();
 
-const { openDialog } = useUser(tableRef, treeRef);
+const { openDialog, handleReset } = useUser(tableRef, treeRef);
 
 const svg = `
         <path class="path" d="
@@ -173,7 +173,7 @@ const handleDelete = async row => {
             type="primary"
             size="small"
             :icon="useRenderIcon(Password)"
-            @click.prevent="openDialog('修改', row)"
+            @click.prevent="handleReset(row)"
           >
             重置密碼
           </el-button>

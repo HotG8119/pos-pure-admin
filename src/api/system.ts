@@ -43,6 +43,12 @@ export const patchUserInfo = (id: number, data: object) => {
   });
 };
 
+export const patchUserPassword = (id: number, data: object) => {
+  return http.request<Result>("put", baseUrlApi(`users/password/${id}`), {
+    data
+  });
+};
+
 export const deleteUser = (id: number) => {
   return http.request<Result>("delete", baseUrlApi(`users/${id}`));
 };

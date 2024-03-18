@@ -2,7 +2,7 @@ import "./reset.css";
 import dayjs from "dayjs";
 // import roleForm from "../form/role.vue";
 import editForm from "../form/index.vue";
-// import { zxcvbn } from "@zxcvbn-ts/core";
+import { zxcvbn } from "@zxcvbn-ts/core";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 // import croppingUpload from "../upload.vue";
@@ -11,7 +11,12 @@ import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import type { FormItemProps, RoleFormItemProps } from "./types";
 import { hideTextAtIndex, getKeyList, isAllEmpty } from "@pureadmin/utils";
-import { getUserList, signUp, patchUserInfo } from "@/api/system";
+import {
+  getUserList,
+  signUp,
+  patchUserInfo,
+  patchUserPassword
+} from "@/api/system";
 // import {
 //   getRoleIds,
 //   getDeptList,
@@ -35,6 +40,8 @@ import {
   reactive,
   onMounted
 } from "vue";
+
+import { REGEXP_PWD } from "./rule";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
@@ -402,7 +409,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 重置密码 */
   function handleReset(row) {
     addDialog({
-      title: `重置 ${row.username} 用户的密码`,
+      title: `重置 ${row.name} 的密碼`,
       width: "30%",
       draggable: true,
       closeOnClickModal: false,
@@ -414,7 +421,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
               rules={[
                 {
                   required: true,
-                  message: "请输入新密码",
+                  message:
+                    "請輸入密碼格式應為8-18位數字、字母、符號的任意兩種組合的新密碼",
                   trigger: "blur"
                 }
               ]}
@@ -424,7 +432,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                 show-password
                 type="password"
                 v-model={pwdForm.newPwd}
-                placeholder="请输入新密码"
+                placeholder="請輸入新密碼"
               />
             </ElFormItem>
           </ElForm>
@@ -456,16 +464,35 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       ),
       closeCallBack: () => (pwdForm.newPwd = ""),
       beforeSure: done => {
-        ruleFormRef.value.validate(valid => {
+        ruleFormRef.value.validate(async valid => {
+          if (!REGEXP_PWD.test(pwdForm.newPwd)) {
+            message("密碼格式應為8-18位數字、字母、符號的任意兩種組合", {
+              type: "error"
+            });
+            return;
+          }
           if (valid) {
             // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
-              type: "success"
-            });
-            console.log(pwdForm.newPwd);
-            // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
-            done(); // 关闭弹框
-            onSearch(); // 刷新表格数据
+            
+            try {
+              // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
+              const res = await patchUserPassword(row.id, {
+                password: pwdForm.newPwd
+              });
+              console.log("res,", res);
+              if (!res.success) {
+                message(`重置失敗，${res.message}`, { type: "error" });
+                return;
+              }
+
+              message(`已成功重置 ${row.name} 的密碼`, {
+                type: "success"
+              });
+              done(); // 关闭弹框
+              onSearch(); // 刷新表格数据
+            } catch (err) {
+              console.error("patchUserPassword err", err);
+            }
           }
         });
       }
