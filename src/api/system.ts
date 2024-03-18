@@ -2,6 +2,7 @@ import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
 
 type Result = {
+  message?: string;
   success: boolean;
   data?: Array<any>;
 };
@@ -26,6 +27,10 @@ type ResultTable = {
 // };
 export const getUserList = () => {
   return http.request<Result>("get", baseUrlApi("users"));
+};
+
+export const signUp = (data: object) => {
+  return http.request<Result>("post", baseUrlApi("signup"), { data });
 };
 
 export const switchUserRole = (id: number) => {

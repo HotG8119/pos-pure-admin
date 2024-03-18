@@ -11,7 +11,7 @@ import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import type { FormItemProps, RoleFormItemProps } from "./types";
 import { hideTextAtIndex, getKeyList, isAllEmpty } from "@pureadmin/utils";
-import { getUserList, patchUserInfo } from "@/api/system";
+import { getUserList, signUp, patchUserInfo } from "@/api/system";
 // import {
 //   getRoleIds,
 //   getDeptList,
@@ -266,8 +266,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
+    console.log("on serch data before");
     const { data } = await getUserList(toRaw(form));
-    console.log("on serch data", data);
+    console.log("on serch data after", data);
     // dataList.value = data.list;
     // pagination.total = data.total;
     // pagination.pageSize = data.pageSize;
@@ -314,18 +315,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           id: row?.id ?? 0,
           name: row?.name ?? "",
           email: row?.email ?? "",
-          //管理員權限如果存在就是"是"，否則就是"否"
           isAdmin: row?.isAdmin ? "是" : "否"
-
-          // parentId: row?.dept.id ?? 0,
-          // nickname: row?.nickname ?? "",
-          // username: row?.username ?? "",
-          // password: row?.password ?? "",
-          // phone: row?.phone ?? "",
-          // email: row?.email ?? "",
-          // sex: row?.sex ?? "",
-          // status: row?.status ?? 1,
-          // remark: row?.remark ?? ""
         }
       },
       width: "46%",
@@ -345,18 +335,23 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         }
         FormRef.validate(async valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
-              console.log("新增 title:", title);
               // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              try {
+                const res = await signUp(curData);
+                if (res.success) {
+                  chores();
+                } else {
+                  message(`新增失敗，${res.message}`, { type: "error" });
+                }
+              } catch (err) {
+                console.error("signUp err", err);
+              }
             } else {
-              console.log("title:", title);
               // 实际开发先调用修改接口，再进行下面操作
               try {
                 const res = await patchUserInfo(row.id, curData);
-                console.log("patch res", res);
                 if (res.success) {
                   chores();
                 } else {

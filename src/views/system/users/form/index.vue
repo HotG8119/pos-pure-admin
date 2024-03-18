@@ -12,29 +12,10 @@ const props = withDefaults(defineProps<FormProps>(), {
     name: "",
     email: "",
     isAdmin: "",
-    // parentId: 0,
-    // nickname: "",
-    // username: "",
-    password: "",
-    checkPassword: ""
-    // phone: "",
-    // email: "",
-    // sex: "",
-    // status: 1,
-    // remark: ""
+    password: ""
   })
 });
 
-const sexOptions = [
-  {
-    value: 0,
-    label: "男"
-  },
-  {
-    value: 1,
-    label: "女"
-  }
-];
 const ruleFormRef = ref();
 const { switchStyle } = usePublicHooks();
 const newFormInline = ref(props.formInline);
@@ -47,6 +28,7 @@ defineExpose({ getRef });
 </script>
 
 <template>
+  {{ newFormInline }}
   <el-form
     ref="ruleFormRef"
     :model="newFormInline"
@@ -55,17 +37,17 @@ defineExpose({ getRef });
   >
     <el-row :gutter="30">
       <re-col :value="24" :xs="24" :sm="24">
-        <el-form-item label="帳號名稱" prop="name">
+        <el-form-item label="名稱" prop="name">
           <el-input
             v-model="newFormInline.name"
             clearable
-            placeholder="請輸入帳號名稱"
+            placeholder="請輸入使用者名稱"
           />
         </el-form-item>
       </re-col>
 
       <re-col :value="24" :xs="24" :sm="24">
-        <el-form-item label="帳號信箱" prop="email">
+        <el-form-item label="信箱" prop="email">
           <el-input
             v-model="newFormInline.email"
             clearable
@@ -73,7 +55,21 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
-
+      <re-col
+        v-if="newFormInline.title === '新增'"
+        :value="24"
+        :xs="24"
+        :sm="24"
+      >
+        <el-form-item label="密碼" prop="password">
+          <el-input
+            v-model="newFormInline.password"
+            type="password"
+            clearable
+            placeholder="請輸入使用者密碼"
+          />
+        </el-form-item>
+      </re-col>
       <re-col
         v-if="newFormInline.title === '新增'"
         :value="24"
@@ -92,129 +88,6 @@ defineExpose({ getRef });
           />
         </el-form-item>
       </re-col>
-
-      <re-col
-        v-if="newFormInline.title === '新增'"
-        :value="24"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="帳號密碼" prop="password">
-          <el-input
-            v-model="newFormInline.password"
-            clearable
-            placeholder="請輸入帳號密碼"
-          />
-        </el-form-item>
-      </re-col>
-
-      <!-- <re-col
-        v-if="newFormInline.title === '修改'"
-        :value="24"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="修改密碼" prop="password">
-          <el-input
-            v-model="newFormInline.password"
-            clearable
-            placeholder="請輸入密碼"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col
-        v-if="newFormInline.title === '修改'"
-        :value="24"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="確認密碼" prop="password">
-          <el-input
-            v-model="newFormInline.checkPassword"
-            clearable
-            placeholder="請再次輸入密碼"
-          />
-        </el-form-item>
-      </re-col> -->
-      <!-- <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="手機" prop="phone">
-          <el-input
-            v-model="newFormInline.phone"
-            clearable
-            placeholder="请输入手机号"
-          />
-        </el-form-item>
-      </re-col> -->
-
-      <!-- <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户性别">
-          <el-select
-            v-model="newFormInline.sex"
-            placeholder="请选择用户性别"
-            class="w-full"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in sexOptions"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-      </re-col> -->
-
-      <!-- <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="归属部门">
-          <el-cascader
-            v-model="newFormInline.parentId"
-            class="w-full"
-            :options="newFormInline.higherDeptOptions"
-            :props="{
-              value: 'id',
-              label: 'name',
-              emitPath: false,
-              checkStrictly: true
-            }"
-            clearable
-            filterable
-            placeholder="请选择归属部门"
-          >
-            <template #default="{ node, data }">
-              <span>{{ data.name }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-        </el-form-item>
-      </re-col> -->
-      <!-- <re-col
-        v-if="newFormInline.title === '新增'"
-        :value="12"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="用户状态">
-          <el-switch
-            v-model="newFormInline.status"
-            inline-prompt
-            :active-value="1"
-            :inactive-value="0"
-            active-text="启用"
-            inactive-text="停用"
-            :style="switchStyle"
-          />
-        </el-form-item>
-      </re-col> -->
-
-      <!-- <re-col>
-        <el-form-item label="备注">
-          <el-input
-            v-model="newFormInline.remark"
-            placeholder="请输入备注信息"
-            type="textarea"
-          />
-        </el-form-item>
-      </re-col> -->
     </el-row>
   </el-form>
 </template>

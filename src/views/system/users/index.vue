@@ -140,43 +140,6 @@ const handleDelete = async row => {
     message("使用者刪除錯誤", { type: "error" });
   }
 };
-
-const changePassword = row => {
-  const userId = useUserStoreHook().userId;
-  if (row.id !== userId) {
-    message("不能修改非自己的密碼", { type: "error" });
-    return;
-  }
-
-  useUser().changePassword(row);
-};
-
-const modifyUserData = row => {
-  const userId = useUserStoreHook().userId;
-  if (row.id !== userId) {
-    message("只能修改自己的資料", { type: "error" });
-    return;
-  }
-  openDialog("修改", row);
-};
-// const now = new Date();
-// const tableData = ref(tableDataMore);
-
-// const deleteRow = (index: number) => {
-//   tableData.value.splice(index, 1);
-// };
-
-// const onAddItem = () => {
-//   now.setDate(now.getDate() + 1);
-//   tableData.value.push({
-//     date: dayjs(now).format("YYYY-MM-DD"),
-//     name: "Tom",
-//     address: "No. 189, Grove St, Los Angeles",
-//     state: "California",
-//     city: "Los Angeles",
-//     "post-code": "CA 90036"
-//   });
-// };
 </script>
 
 <template>
@@ -186,7 +149,12 @@ const modifyUserData = row => {
       :element-loading-svg="svg"
       element-loading-svg-view-box="-10, -10, 50, 50"
     >
-      <el-button class="mb-4" style="width: 100%" @click="openDialog('新增')">
+      <el-button
+        class="mb-4"
+        style="width: 100%"
+        :icon="useRenderIcon(AddFill)"
+        @click="openDialog()"
+      >
         新增員工
       </el-button>
       <pure-table :data="userData" :columns="columns" maxHeight="800">
@@ -204,10 +172,10 @@ const modifyUserData = row => {
             link
             type="primary"
             size="small"
-            :icon="useRenderIcon(EditPen)"
-            @click.prevent="changePassword(row)"
+            :icon="useRenderIcon(Password)"
+            @click.prevent="openDialog('修改', row)"
           >
-            修改密碼
+            重置密碼
           </el-button>
 
           <el-button
