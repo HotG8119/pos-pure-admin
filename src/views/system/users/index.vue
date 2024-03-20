@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import dayjs from "dayjs";
-import { tableDataMore } from "./data";
 import { useUser } from "./utils/hook";
 import { message } from "@/utils/message";
 import { storageLocal } from "@pureadmin/utils";
@@ -10,19 +8,14 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 import { getUserList, switchUserRole, deleteUser } from "@/api/system";
 import { initRouter } from "@/router/utils";
-import { useUserStoreHook } from "@/store/modules/user";
 
-import Upload from "@iconify-icons/ri/upload-line";
 import Role from "@iconify-icons/ri/admin-line";
 import Password from "@iconify-icons/ri/lock-password-line";
-import More from "@iconify-icons/ep/more-filled";
 import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
-import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 
 const treeRef = ref();
-const formRef = ref();
 const tableRef = ref();
 
 const { openDialog, handleReset } = useUser(tableRef, treeRef);
@@ -85,7 +78,7 @@ const columns: TableColumnList = [
   },
   {
     label: "操作",
-    width: "260",
+    width: "390",
     fixed: "right",
     slot: "operation"
   }
@@ -169,16 +162,6 @@ const handleDelete = async row => {
             切換權限
           </el-button>
           <el-button
-            link
-            type="primary"
-            size="small"
-            :icon="useRenderIcon(Password)"
-            @click.prevent="handleReset(row)"
-          >
-            重置密碼
-          </el-button>
-
-          <el-button
             class="reset-margin"
             link
             type="primary"
@@ -188,7 +171,15 @@ const handleDelete = async row => {
           >
             修改資料
           </el-button>
-
+          <el-button
+            link
+            type="primary"
+            size="small"
+            :icon="useRenderIcon(Password)"
+            @click.prevent="handleReset(row)"
+          >
+            重置密碼
+          </el-button>
           <el-popconfirm
             :title="`是否刪除ID：${row.id} 的使用者資料?`"
             @confirm="handleDelete(row)"

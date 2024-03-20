@@ -28,7 +28,6 @@ defineExpose({ getRef });
 </script>
 
 <template>
-  {{ newFormInline }}
   <el-form
     ref="ruleFormRef"
     :model="newFormInline"
