@@ -4,7 +4,7 @@ interface FormItemProps {
   /** 分類名稱 */
   name: string;
   /** 分類順序 */
-  rank: number;
+  //rank: number;
   /** 備註 */
   remark: string;
 }

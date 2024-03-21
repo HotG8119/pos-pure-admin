@@ -183,7 +183,11 @@ export function useRole() {
               try {
                 const res = await addCategory(curData);
                 console.log("res", res);
-                chores();
+                if (res.success) {
+                  chores();
+                } else {
+                  message(res.message, { type: "error" });
+                }
               } catch (err) {
                 console.log(err);
               }
