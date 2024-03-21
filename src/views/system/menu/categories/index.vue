@@ -102,7 +102,7 @@ const {
                   :size="size"
                   :icon="useRenderIcon(Delete)"
                 >
-                  删除
+                  刪除
                 </el-button>
               </template>
             </el-popconfirm>

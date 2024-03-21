@@ -20,3 +20,11 @@ export const addCategory = (data: object) => {
     data
   });
 };
+
+export const deleteCategory = (id: number) => {
+  return http.request<Result>("delete", baseUrlApi(`menu/categories/${id}`));
+};
+
+export const editCategory = (id: number, data: object) => { 
+  return http.request<Result>("put", baseUrlApi(`menu/categories/${id}`), { data });
+}

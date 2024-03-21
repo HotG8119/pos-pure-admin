@@ -1,7 +1,12 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { message } from "@/utils/message";
-import { getCategoryList, addCategory } from "@/api/products";
+import {
+  getCategoryList,
+  addCategory,
+  deleteCategory,
+  editCategory
+} from "@/api/products";
 
 import { getRoleList } from "@/api/system";
 
@@ -15,8 +20,9 @@ import { reactive, ref, onMounted, h, toRaw } from "vue";
 export function useRole() {
   const form = reactive({
     name: "",
-    code: "",
-    status: ""
+    rank: "",
+    remark: "",
+    createdAt: ""
   });
   const formRef = ref();
   const dataList = ref([]);
@@ -36,21 +42,19 @@ export function useRole() {
       minWidth: 100
     },
     {
-      label: "角色名稱",
+      label: "分類名稱",
       prop: "name",
       minWidth: 120
     },
     {
-      label: "备注",
+      label: "備註",
       prop: "remark",
       minWidth: 150
     },
     {
       label: "创建时间",
       minWidth: 180,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      prop: "createdAt"
     },
     {
       label: "操作",
@@ -111,8 +115,10 @@ export function useRole() {
       });
   }
 
-  function handleDelete(row) {
-    message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
+  async function handleDelete(row) {
+    const res = await deleteCategory(row.id);
+    if (!res.success) return message(res.message, { type: "error" });
+    message(`分類 ${row.name} 已被刪除`, { type: "success" });
     onSearch();
   }
 
@@ -182,18 +188,22 @@ export function useRole() {
               // 实际开发先调用新增接口，再进行下面操作
               try {
                 const res = await addCategory(curData);
-                console.log("res", res);
-                if (res.success) {
-                  chores();
-                } else {
-                  message(res.message, { type: "error" });
-                }
+                if (!res.success)
+                  return message(res.message, { type: "error" });
+                chores();
               } catch (err) {
-                console.log(err);
+                return message("新增失败", { type: "error" });
               }
             } else {
               // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              try {
+                const res = await editCategory(row.id, curData);
+                if (!res.success)
+                  return message(res.message, { type: "error" });
+                chores();
+              } catch (err) {
+                return message("新增失败", { type: "error" });
+              }
             }
           }
         });
