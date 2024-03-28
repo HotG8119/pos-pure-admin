@@ -23,6 +23,10 @@ export const addProduct = (data: object) => {
   });
 };
 
+export const deleteProduct = (id: number) => {
+  return http.request<Result>("delete", baseUrlApi(`menu/products/${id}`));
+};
+
 export const switchAvailable = (id: number) => {
   return http.request<Result>(
     "put",

@@ -17,6 +17,7 @@ import { getKeyList, isAllEmpty } from "@pureadmin/utils";
 import {
   getProductList,
   addProduct,
+  deleteProduct,
   switchAvailable,
   getCategoryList
 } from "@/api/products";
@@ -209,8 +210,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     console.log(row);
   }
 
-  function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
+  async function handleDelete(row) {
+    const res = await deleteProduct(row.id);
+    if (!res.success) {
+      message(res.message, { type: "error" });
+      return;
+    }
+    message(`您已刪除 ${row.name} 的這個餐點`, { type: "success" });
     onSearch();
   }
 
