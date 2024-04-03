@@ -4,10 +4,6 @@ import { useUser } from "./utils/hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
-import Upload from "@iconify-icons/ri/upload-line";
-import Role from "@iconify-icons/ri/admin-line";
-import Password from "@iconify-icons/ri/lock-password-line";
-import More from "@iconify-icons/ep/more-filled";
 import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Refresh from "@iconify-icons/ep/refresh";
@@ -28,16 +24,11 @@ const {
   dataList,
   selectedNum,
   pagination,
-  buttonClass,
   onSearch,
   resetForm,
   onbatchDel,
   openDialog,
-  handleUpdate,
   handleDelete,
-  handleUpload,
-  handleReset,
-  handleRole,
   handleSizeChange,
   onSelectionCancel,
   handleCurrentChange,
@@ -187,7 +178,7 @@ const {
                   </el-button>
                 </template>
               </el-popconfirm>
-              <el-dropdown>
+              <!-- <el-dropdown>
                 <el-button
                   class="ml-3 mt-[2px]"
                   link
@@ -236,7 +227,7 @@ const {
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
-              </el-dropdown>
+              </el-dropdown> -->
             </template>
           </pure-table>
         </template>

@@ -23,8 +23,21 @@ export const addProduct = (data: object) => {
   });
 };
 
+export const uploadImage = (data: object) => {
+  console.log("uploadImageData", data);
+  return http.request<Result>("post", baseUrlApi("menu/products/upload"), {
+    data
+  });
+};
+
 export const deleteProduct = (id: number) => {
   return http.request<Result>("delete", baseUrlApi(`menu/products/${id}`));
+};
+
+export const editProduct = (id: number, data: object) => {
+  return http.request<Result>("put", baseUrlApi(`menu/products/${id}`), {
+    data
+  });
 };
 
 export const switchAvailable = (id: number) => {

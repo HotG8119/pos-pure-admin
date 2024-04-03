@@ -18,6 +18,7 @@ import {
   getProductList,
   addProduct,
   deleteProduct,
+  editProduct,
   switchAvailable,
   getCategoryList
 } from "@/api/products";
@@ -134,7 +135,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "操作",
       fixed: "right",
-      width: 180,
+      width: 210,
       slot: "operation"
     }
   ];
@@ -314,7 +315,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           description: row?.description ?? "",
           isAvailable: row?.isAvailable ?? 1,
           categoryId: row?.Category.id ?? null,
-          categoryOptions: categoryOptions.value
+          categoryOptions: categoryOptions.value,
+          image: row?.image ?? ""
         }
       },
       width: "46%",
@@ -337,15 +339,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
+              // 实际开发先调用新增接口，再进行下面操作
               const res = await addProduct(curData);
               if (!res.success) {
                 message(res.message, { type: "error" });
                 return;
               }
-              // 实际开发先调用新增接口，再进行下面操作
               chores();
             } else {
               // 实际开发先调用修改接口，再进行下面操作
+              const res = await editProduct(row.id, curData);
+              if (!res.success) {
+                message(res.message, { type: "error" });
+                return;
+              }
               chores();
             }
           }
@@ -357,6 +364,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const cropRef = ref();
   /** 上传头像 */
   function handleUpload(row) {
+    console.log("row", row);
     addDialog({
       title: "裁剪、上传头像",
       width: "40%",
@@ -365,7 +373,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       contentRenderer: () =>
         h(croppingUpload, {
           ref: cropRef,
-          imgSrc: row.avatar,
+          imgSrc: row.image ? row.image : "",
           onCropper: info => (avatarInfo.value = info)
         }),
       beforeSure: done => {

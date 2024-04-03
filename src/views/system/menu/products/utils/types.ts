@@ -8,6 +8,7 @@ interface FormItemProps {
   isAvailable: boolean | number;
   categoryId: number;
   categoryOptions: Record<string, unknown>[];
+  image: string;
 
   // parentId: number;
   // nickname: string;
