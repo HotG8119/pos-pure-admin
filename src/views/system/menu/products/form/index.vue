@@ -62,7 +62,6 @@ const handleExceed: UploadProps["onExceed"] = files => {
 </script>
 
 <template>
-  {{ newFormInline }}
   <el-form
     ref="ruleFormRef"
     :model="newFormInline"

@@ -40,13 +40,16 @@ import {
   onMounted
 } from "vue";
 
-export function useUser(tableRef: Ref, treeRef: Ref) {
+export function useUser(tableRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
-    deptId: "",
-    username: "",
-    phone: "",
-    status: ""
+    // deptId: "",
+    // username: "",
+    // phone: "",
+    // status: ""
+    name: "",
+    isAvailable: "",
+    categoryId: ""
   });
   const formRef = ref();
   const ruleFormRef = ref();
@@ -68,12 +71,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     background: true
   });
   const columns: TableColumnList = [
-    {
-      label: "選擇列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
-      fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
+    // {
+    //   label: "選擇列", // 如果需要表格多选，此处label必须设置
+    //   type: "selection",
+    //   fixed: "left",
+    //   reserveSelection: true // 数据刷新后保留选项
+    // },
     {
       label: "ID",
       prop: "id",
@@ -223,10 +226,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    pagination.currentPage = 1;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -256,10 +264,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    //const { data } = await getUserList(toRaw(form));
-    const { data } = await getProductList(toRaw(form));
-
-    console.log("products data", data);
+    const { data } = await getProductList({
+      form: toRaw(form),
+      pageSize: pagination.pageSize,
+      currentPage: pagination.currentPage
+    });
+    console.log("data", data);
     dataList.value = data.list;
     pagination.total = data.total;
     pagination.pageSize = data.pageSize;
@@ -273,8 +283,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    form.deptId = "";
-    treeRef.value.onTreeReset();
+    // form.deptId = "";
+    // treeRef.value.onTreeReset();
     onSearch();
   };
 
@@ -516,6 +526,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     columns,
     dataList,
     treeData,
+    categoryOptions,
     treeLoading,
     selectedNum,
     pagination,

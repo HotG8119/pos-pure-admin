@@ -8,6 +8,7 @@ import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
+import Search from "@iconify-icons/ri/search-line";
 
 defineOptions({
   name: "SystemUser"
@@ -22,15 +23,16 @@ const {
   loading,
   columns,
   dataList,
-  selectedNum,
+  categoryOptions,
+
   pagination,
   onSearch,
   resetForm,
-  onbatchDel,
+
   openDialog,
   handleDelete,
   handleSizeChange,
-  onSelectionCancel,
+
   handleCurrentChange,
   handleSelectionChange
 } = useUser(tableRef, treeRef);
@@ -53,37 +55,44 @@ const {
         :model="form"
         class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
       >
-        <el-form-item label="用户名称：" prop="username">
+        <el-form-item label="產品名稱：" prop="name">
           <el-input
-            v-model="form.username"
-            placeholder="请输入用户名称"
+            v-model="form.name"
+            placeholder="請輸入產品名稱"
             clearable
             class="!w-[180px]"
           />
         </el-form-item>
-        <el-form-item label="手机号码：" prop="phone">
-          <el-input
-            v-model="form.phone"
-            placeholder="请输入手机号码"
-            clearable
-            class="!w-[180px]"
-          />
-        </el-form-item>
-        <el-form-item label="状态：" prop="status">
+        <el-form-item label="分類：" prop="categoryId">
           <el-select
-            v-model="form.status"
-            placeholder="请选择"
+            v-model="form.categoryId"
+            placeholder="請選擇"
             clearable
             class="!w-[180px]"
           >
-            <el-option label="已开启" value="1" />
-            <el-option label="已关闭" value="0" />
+            <el-option
+              v-for="item in categoryOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="提供狀態：" prop="isAvailable">
+          <el-select
+            v-model="form.isAvailable"
+            placeholder="請選擇"
+            clearable
+            class="!w-[180px]"
+          >
+            <el-option label="正常" value="1" />
+            <el-option label="缺貨" value="0" />
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button
             type="primary"
-            :icon="useRenderIcon('search')"
+            :icon="useRenderIcon(Search)"
             :loading="loading"
             @click="onSearch"
           >
@@ -106,7 +115,7 @@ const {
           </el-button>
         </template>
         <template v-slot="{ size, dynamicColumns }">
-          <div
+          <!-- <div
             v-if="selectedNum > 0"
             v-motion-fade
             class="bg-[var(--el-fill-color-light)] w-full h-[46px] mb-2 pl-4 flex items-center"
@@ -129,7 +138,7 @@ const {
                 </el-button>
               </template>
             </el-popconfirm>
-          </div>
+          </div> -->
           <pure-table
             ref="tableRef"
             row-key="id"
