@@ -24,15 +24,12 @@ const {
   columns,
   dataList,
   categoryOptions,
-
   pagination,
   onSearch,
   resetForm,
-
   openDialog,
   handleDelete,
   handleSizeChange,
-
   handleCurrentChange,
   handleSelectionChange
 } = useUser(tableRef, treeRef);

@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { message } from "@/utils/message";
 import {
@@ -8,10 +7,6 @@ import {
   editCategory
 } from "@/api/products";
 
-import { getRoleList } from "@/api/system";
-
-import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
@@ -27,8 +22,6 @@ export function useRole() {
   const formRef = ref();
   const dataList = ref([]);
   const loading = ref(true);
-  const switchLoadMap = ref({});
-  const { switchStyle } = usePublicHooks();
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 10,
@@ -52,7 +45,7 @@ export function useRole() {
       minWidth: 150
     },
     {
-      label: "创建时间",
+      label: "創建時間",
       minWidth: 180,
       prop: "createdAt"
     },
@@ -73,48 +66,6 @@ export function useRole() {
   //   ];
   // });
 
-  function onChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
-      }</strong><strong style='color:var(--el-color-primary)'>${
-        row.name
-      }</strong>吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true
-      }
-    )
-      .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
-            type: "success"
-          });
-        }, 300);
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
-      });
-  }
-
   async function handleDelete(row) {
     const res = await deleteCategory(row.id);
     if (!res.success) return message(res.message, { type: "error" });
@@ -124,10 +75,15 @@ export function useRole() {
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    pagination.currentPage = 1;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   function handleSelectionChange(val) {
@@ -137,7 +93,11 @@ export function useRole() {
   async function onSearch() {
     loading.value = true;
     //const { data } = await getRoleList(toRaw(form));
-    const { data } = await getCategoryList(toRaw(form));
+    const { data } = await getCategoryList({
+      form: toRaw(form),
+      pageSize: pagination.pageSize,
+      currentPage: pagination.currentPage
+    });
     console.log(data);
     dataList.value = data.list;
     pagination.total = data.total;
