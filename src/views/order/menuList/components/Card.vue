@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, PropType, Ref } from "vue";
+import { ref, computed, PropType } from "vue";
 
 defineOptions({
   name: "ReCard"
@@ -30,11 +30,8 @@ const quantity = ref(1);
 
 const handleClickAddToCart = (
   product: CardProductType,
-  orderQuantity: Ref<number>
+  orderQuantity: number
 ) => {
-  // 现在，除了产品信息，还要发出当前选择的数量
-  console.log("product", product);
-  console.log("quantity", orderQuantity);
   emit("add-to-cart", { product, orderQuantity });
   quantity.value = 1;
 };

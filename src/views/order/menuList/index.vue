@@ -8,10 +8,10 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 import { postOrder } from "@/api/order";
 
-import { Refresh, Delete } from "@element-plus/icons-vue";
+import { Refresh, Delete, Search } from "@element-plus/icons-vue";
 
 defineOptions({
-  name: "ListCard"
+  name: "點餐"
 });
 
 const svg = `
@@ -141,27 +141,19 @@ const confirmClick = () => {
         :inline="true"
         class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
       >
-        <el-form-item label="名稱：" prop="name">
+        <el-form-item prop="name">
           <el-input
             v-model="searchValue"
             style="width: 300px"
             placeholder="請輸入查詢名稱"
             clearable
-          >
-            <template #suffix>
-              <el-icon class="el-input__icon">
-                <IconifyIconOffline
-                  v-show="searchValue.length === 0"
-                  icon="search"
-                />
-              </el-icon>
-            </template>
-          </el-input>
+            :prefix-icon="Search"
+          />
         </el-form-item>
-        <el-form-item label="分類：" prop="categoryId">
+        <el-form-item prop="categoryId">
           <el-select
             v-model="searchCategory"
-            placeholder="請選擇"
+            placeholder="請選擇分類"
             clearable
             class="!w-[180px]"
           >
@@ -190,6 +182,66 @@ const confirmClick = () => {
         </el-form-item>
       </el-form>
     </div>
+
+    <div>
+      <el-drawer v-model="cartDrawer" direction="rtl">
+        <template #header>
+          <h4>購物車清單</h4>
+        </template>
+        <template #default>
+          <el-select
+            v-model="selectTableNumber"
+            placeholder="請選擇桌號"
+            size="large"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in tableOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+          <el-table :data="cartItems" stripe style="width: 100%">
+            <el-table-column prop="product.name" label="名稱" width="180" />
+            <el-table-column prop="product.price" label="單價" width="100" />
+            <el-table-column prop="orderQuantity" label="數量">
+              <template #default="scope">
+                <el-input-number
+                  v-model="scope.row.orderQuantity"
+                  :min="1"
+                  :max="20"
+                />
+                <el-button
+                  type="text"
+                  :icon="Delete"
+                  circle
+                  @click="removeItem(scope.$index, scope.row)"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
+          <hr />
+          <h3 style="text-align: right">總金額：{{ totalAmount }}</h3>
+        </template>
+        <template #footer>
+          <div
+            style="display: flex; justify-content: space-between; width: 100%"
+          >
+            <div>
+              <el-button type="danger" @click="resetCart">清空餐點</el-button>
+            </div>
+            <div>
+              <el-button @click="cartDrawer = false">關閉</el-button>
+              <el-button type="primary" @click="confirmClick"
+                >送出訂單</el-button
+              >
+            </div>
+          </div>
+        </template>
+      </el-drawer>
+    </div>
+
     <div
       v-loading="dataLoading"
       :element-loading-svg="svg"
@@ -245,59 +297,5 @@ const confirmClick = () => {
         />
       </template>
     </div>
-    <!-- <dialogForm v-model:visible="formDialogVisible" :data="formData" /> -->
   </div>
-
-  <el-drawer v-model="cartDrawer" direction="rtl">
-    <template #header>
-      <h4>購物車清單</h4>
-    </template>
-    <template #default>
-      <el-select
-        v-model="selectTableNumber"
-        placeholder="請選擇桌號"
-        size="large"
-        style="width: 240px"
-      >
-        <el-option
-          v-for="item in tableOptions"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
-      </el-select>
-      <el-table :data="cartItems" stripe style="width: 100%">
-        <el-table-column prop="product.name" label="名稱" width="180" />
-        <el-table-column prop="product.price" label="單價" width="100" />
-        <el-table-column prop="orderQuantity" label="數量">
-          <template #default="scope">
-            <el-input-number
-              v-model="scope.row.orderQuantity"
-              :min="1"
-              :max="20"
-            />
-            <el-button
-              type="text"
-              :icon="Delete"
-              circle
-              @click="removeItem(scope.$index, scope.row)"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <hr />
-      <h3 style="text-align: right">總金額：{{ totalAmount }}</h3>
-    </template>
-    <template #footer>
-      <div style="display: flex; justify-content: space-between; width: 100%">
-        <div>
-          <el-button type="danger" @click="resetCart">清空餐點</el-button>
-        </div>
-        <div>
-          <el-button @click="cartDrawer = false">關閉</el-button>
-          <el-button type="primary" @click="confirmClick">送出訂單</el-button>
-        </div>
-      </div>
-    </template>
-  </el-drawer>
 </template>

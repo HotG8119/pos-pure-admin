@@ -1,3 +1,4 @@
+import { error } from "@/router/enums";
 import { $t } from "@/plugins/i18n";
 
 export default {
@@ -7,7 +8,7 @@ export default {
     icon: "informationLine",
     title: $t("menus.hsabnormal"),
     // showLink: false,
-    rank: 9
+    rank: error
   },
   children: [
     {

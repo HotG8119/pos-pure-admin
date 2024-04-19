@@ -1,30 +1,31 @@
+import { order } from "@/router/enums";
+
 export default {
   path: "/order",
-  redirect: "/order/menu",
   meta: {
     icon: "lets-icons:order",
-    title: "訂單"
+    title: "訂單",
     // showLink: false,
-    //rank: 9
+    rank: order
   },
   children: [
     {
-      path: "/order/menu",
+      path: "/order/menuList",
       name: "點餐",
-      component: () => import("@/views/order/menu/index.vue"),
+      component: () => import("@/views/order/menuList/index.vue"),
       meta: {
         icon: "mdi:order-bool-ascending",
         title: "點餐"
       }
     },
     {
-      path: "/order/orders",
-      name: "全部訂單",
-      component: () => import("@/views/order/menu/index.vue"),
+      path: "/order/todayOrders",
+      name: "今日訂單",
+      component: () => import("@/views/order/todayOrders/index.vue"),
       meta: {
         icon: "fe:list-order",
-        title: "全部訂單"
+        title: "今日訂單"
       }
     }
   ]
-} as RouteConfigsTable;
+} satisfies RouteConfigsTable;
