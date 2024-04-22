@@ -1,7 +1,12 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { message } from "@/utils/message";
-import { getTodayOrders, deleteOrder, updateOrder } from "@/api/order";
+import {
+  getTodayOrders,
+  deleteOrder,
+  updateOrder,
+  payOrder
+} from "@/api/order";
 //import { getRoleList } from "@/api/system";
 import { ElMessageBox } from "element-plus";
 //import { usePublicHooks } from "../../../system/hooks";
@@ -159,6 +164,9 @@ export function useRole() {
   //     });
   // }
 
+  const dialogTableVisible = ref(false);
+  const checkOrderData = ref({});
+
   async function handleDelete(row) {
     try {
       await ElMessageBox.confirm(`確定要刪除訂單 ${row.id} 嗎？`, "提示", {
@@ -173,8 +181,7 @@ export function useRole() {
       message(`您已經刪除編號 ${row.id} 的訂單`, { type: "success" });
       onSearch();
     } catch (error) {
-      console.log("error", error);
-      //message(error.message, { type: "error" });
+      message(error.message, { type: "error" });
     }
   }
 
@@ -202,8 +209,8 @@ export function useRole() {
       item.createdAt = dayjs(item.createdAt).format("HH:mm");
       item.completedAt = item.completedAt
         ? dayjs(item.completedAt).format("HH:mm")
-        : "";
-      item.paidAt = item.paidAt ? dayjs(item.paidAt).format("HH:mm") : "";
+        : null;
+      item.paidAt = item.paidAt ? dayjs(item.paidAt).format("HH:mm") : null;
       if (!item.completedAt) {
         item.status = "未完成";
       } else if (!item.paidAt) {
@@ -247,9 +254,46 @@ export function useRole() {
     }
   }
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openPaymentList(row) {
     addDialog({
-      title: `${title}角色`,
+      title: "付款",
+      props: {
+        formInline: {
+          id: row.id,
+          total: row.total
+        }
+      },
+      width: "40%",
+      draggable: true,
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(editForm, { ref: formRef }),
+      beforeSure: (done, { options }) => {
+        const FormRef = formRef.value.getRef();
+        const curData = options.props.formInline as FormItemProps;
+        function chores() {
+          message(`您已經付款了編號為${curData.id}的訂單`, {
+            type: "success"
+          });
+          done(); // 关闭弹框
+          onSearch(); // 刷新表格数据
+        }
+        FormRef.validate(valid => {
+          if (valid) {
+            console.log("curData", curData);
+            // 表单规则校验通过
+            // 实际开发先调用新增接口，再进行下面操作
+            chores();
+          }
+        });
+      }
+    });
+  }
+
+  function openDialog(title = "新增", row?: FormItemProps) {
+    console.log("title: ", title, "row: ", row);
+    addDialog({
+      title: `${title}`,
       props: {
         formInline: {
           name: row?.name ?? "",
@@ -294,6 +338,36 @@ export function useRole() {
     message("等菜单管理页面开发后完善");
   }
 
+  const handleCheckOrder = row => {
+    dialogTableVisible.value = true;
+    checkOrderData.value = row;
+  };
+
+  async function handlePayMent(method, checkOrderData) {
+    try {
+      await ElMessageBox.confirm(
+        `${method}結帳 ${checkOrderData.totalAmount} 元嗎？`,
+        "提示",
+        {
+          confirmButtonText: "確定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      );
+      const res = await payOrder(checkOrderData.id, { method });
+      console.log("res", res);
+      if (!res.success) throw new Error(res.message);
+      dialogTableVisible.value = false;
+      message(`您已經${method}編號 ${checkOrderData.id} 的訂單`, {
+        type: "success"
+      });
+      onSearch();
+    } catch (error) {
+      console.log("error", error);
+      message(error.message, { type: "error" });
+    }
+  }
+
   /** 数据权限 可自行开发 */
   // function handleDatabase() {}
 
@@ -308,16 +382,21 @@ export function useRole() {
     childColumns,
     dataList,
     pagination,
+    dialogTableVisible,
+    checkOrderData,
     // buttonClass,
     onSearch,
     resetForm,
     openDialog,
+    openPaymentList,
     handleUpdateOrder,
     handleMenu,
     handleDelete,
     // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    handleCheckOrder,
+    handlePayMent
   };
 }

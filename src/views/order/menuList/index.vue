@@ -233,9 +233,9 @@ const confirmClick = () => {
             </div>
             <div>
               <el-button @click="cartDrawer = false">關閉</el-button>
-              <el-button type="primary" @click="confirmClick"
-                >送出訂單</el-button
-              >
+              <el-button type="primary" @click="confirmClick">
+                送出訂單
+              </el-button>
             </div>
           </div>
         </template>

@@ -10,6 +10,7 @@ import Delete from "@iconify-icons/ep/delete";
 import Check from "@iconify-icons/ep/check";
 import Search from "@iconify-icons/ep/search";
 import Refresh from "@iconify-icons/ep/refresh";
+import Cash from "@iconify-icons/ep/coin";
 
 defineOptions({
   name: "SystemRole"
@@ -23,18 +24,28 @@ const {
   childColumns,
   dataList,
   pagination,
+  dialogTableVisible,
+  checkOrderData,
   // buttonClass,
   onSearch,
   resetForm,
-  openDialog,
   handleUpdateOrder,
   //handleMenu,
   handleDelete,
   // handleDatabase,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
+  handleCheckOrder,
+  handlePayMent
 } = useRole();
+
+// const dialogTableVisible = ref(false);
+// const checkOrderData = ref({});
+// const handleCheckOrder = row => {
+//   dialogTableVisible.value = true;
+//   checkOrderData.value = row;
+// };
 </script>
 
 <template>
@@ -111,6 +122,7 @@ const {
         >
           <template #expand="{ row }">
             {{ row }}
+            {{ row.completedAt }}
             <div class="m-4">
               <h3>餐點資訊</h3>
               <pure-table :data="row.cartItems" :columns="childColumns" />
@@ -125,9 +137,8 @@ const {
               <el-row justify="space-between">
                 <div>
                   <el-button
-                    type="text"
+                    type="danger"
                     :icon="useRenderIcon(Delete)"
-                    circle
                     @click="handleDelete(row)"
                   >
                     刪除
@@ -135,20 +146,23 @@ const {
                 </div>
                 <div>
                   <el-button
-                    type="text"
+                    v-if="row.status === '未完成'"
+                    class="complete-btn"
+                    type="primary"
                     :icon="useRenderIcon(Check)"
-                    circle
+                    :disabled="!!row.completedAt"
                     @click="handleUpdateOrder('完成', row)"
                   >
                     完成餐點
                   </el-button>
+
                   <el-button
-                    class="reset-margin"
-                    link
+                    v-if="row.status === '未付款'"
+                    class="reset-btn"
                     type="primary"
-                    :size="size"
-                    icon="iconoir:hand-cash"
-                    @click="openDialog('修改', row)"
+                    :icon="useRenderIcon(Cash)"
+                    :disabled="!!row.paidAt"
+                    @click="handleCheckOrder(row)"
                   >
                     付款
                   </el-button>
@@ -159,6 +173,36 @@ const {
         </pure-table>
       </template>
     </PureTableBar>
+
+    <el-dialog v-model="dialogTableVisible" title="結帳" width="800">
+      <h3>桌號：{{ checkOrderData.Table.name }}</h3>
+      <el-table :data="checkOrderData.cartItems">
+        <el-table-column property="name" label="名稱" width="250" />
+        <el-table-column property="quantity" label="數量" width="150" />
+        <el-table-column property="price" label="單價" width="150" />
+        <el-table-column
+          :formatter="item => item.quantity * item.price"
+          label="總價"
+          width="150"
+        />
+      </el-table>
+      <h3 class="flex flex-row-reverse mr-10 mb-10">
+        總金額：{{ checkOrderData.totalAmount }}
+      </h3>
+      <div class="flex justify-end m-3">
+        <el-button
+          v-model="checkOrderData.completedAt"
+          type="primary"
+          @click="handlePayMent('現金', checkOrderData)"
+          >現金</el-button
+        >
+        <!-- <el-button
+        type="primary"
+        @click="handlePayMent('LinePay', checkOrderData)"
+        >Line Pay</el-button
+      > -->
+      </div>
+    </el-dialog>
   </div>
 </template>
 
