@@ -18,8 +18,8 @@ import { reactive, ref, onMounted, h, toRaw } from "vue";
 export function useRole() {
   const form = reactive({
     id: "",
-    name: ""
-
+    name: "",
+    status: ""
     // name: "",
     // code: "",
     // status: ""
@@ -187,10 +187,15 @@ export function useRole() {
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    pagination.currentPage = 1;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   function handleSelectionChange(val) {
@@ -199,12 +204,12 @@ export function useRole() {
 
   async function onSearch() {
     loading.value = true;
-    const res = await getTodayOrders();
-    console.log("res", res);
-    const { data } = await getTodayOrders(toRaw(form));
-    //const { data } = await getRoleList(toRaw(form));
-    console.log("data", data);
-    dataList.value = data;
+    const { data } = await getTodayOrders({
+      form: toRaw(form),
+      ...pagination
+    });
+    console.log("data GGG", data);
+    dataList.value = data.list;
     dataList.value.forEach(item => {
       item.createdAt = dayjs(item.createdAt).format("HH:mm");
       item.completedAt = item.completedAt

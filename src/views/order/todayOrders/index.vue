@@ -56,31 +56,16 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="角色名称：" prop="name">
-        <el-input
-          v-model="form.name"
-          placeholder="请输入角色名称"
-          clearable
-          class="!w-[180px]"
-        />
-      </el-form-item>
-      <el-form-item label="角色标识：" prop="code">
-        <el-input
-          v-model="form.code"
-          placeholder="请输入角色标识"
-          clearable
-          class="!w-[180px]"
-        />
-      </el-form-item>
-      <el-form-item label="状态：" prop="status">
+      <el-form-item label="訂單狀態：" prop="status">
         <el-select
           v-model="form.status"
-          placeholder="请选择状态"
+          placeholder="請選擇狀態"
           clearable
           class="!w-[180px]"
         >
-          <el-option label="已启用" value="1" />
-          <el-option label="已停用" value="0" />
+          <el-option label="未完成" value="未完成" />
+          <el-option label="未付款" value="未付款" />
+          <el-option label="已完成" value="已完成" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -90,7 +75,7 @@ const {
           :loading="loading"
           @click="onSearch"
         >
-          搜索
+          搜尋
         </el-button>
         <el-button :icon="useRenderIcon(Refresh)" @click="resetForm(formRef)">
           重置
