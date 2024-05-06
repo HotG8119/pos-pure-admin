@@ -31,6 +31,10 @@ export const payOrder = (id?: string, data?: object) => {
   return http.request<Result>("put", baseUrlApi(`order/pay/${id}`), { data });
 };
 
+export const getCloseoutOrders = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("order/closeout"), { data });
+};
+
 // export const getProductList = (data?: object) => {
 //   return http.request<Result>("post", baseUrlApi("menu/products/list"), {
 //     data

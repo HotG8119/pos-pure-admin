@@ -29,9 +29,9 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@pureadmin/descriptions": "^1.2.0",
-    "@pureadmin/table": "^3.0.2",
-    "@pureadmin/utils": "^2.4.4",
+    "@pureadmin/descriptions": "^1.2.1",
+    "@pureadmin/table": "^3.1.2",
+    "@pureadmin/utils": "^2.4.7",
     "@vueuse/core": "^10.2.0",
     "@vueuse/motion": "^2.0.0",
     "@zxcvbn-ts/core": "^3.0.4",

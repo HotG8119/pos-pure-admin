@@ -101,7 +101,7 @@ export function useRole() {
   const childColumns: TableColumnList = [
     {
       label: "餐點名稱",
-      prop: "name"
+      prop: "Product.name"
     },
     {
       label: "數量",
@@ -109,7 +109,19 @@ export function useRole() {
     },
     {
       label: "價格",
-      prop: "price"
+      prop: "Product.price"
+    },
+    {
+      label: "狀態",
+      prop: "status",
+      formatter: (row: any) => {
+        const statusMap = {
+          preparing: "準備中",
+          completed: "已完成",
+          cancelled: "已取消"
+        };
+        return statusMap[row.status] || row.status;
+      }
     }
   ];
   // const buttonClass = computed(() => {

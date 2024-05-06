@@ -106,8 +106,6 @@ const {
           @page-current-change="handleCurrentChange"
         >
           <template #expand="{ row }">
-            {{ row }}
-            {{ row.completedAt }}
             <div class="m-4">
               <h3>餐點資訊</h3>
               <pure-table :data="row.cartItems" :columns="childColumns" />
@@ -162,11 +160,11 @@ const {
     <el-dialog v-model="dialogTableVisible" title="結帳" width="800">
       <h3>桌號：{{ checkOrderData.Table.name }}</h3>
       <el-table :data="checkOrderData.cartItems">
-        <el-table-column property="name" label="名稱" width="250" />
+        <el-table-column property="Product.name" label="名稱" width="250" />
         <el-table-column property="quantity" label="數量" width="150" />
-        <el-table-column property="price" label="單價" width="150" />
+        <el-table-column property="Product.price" label="單價" width="150" />
         <el-table-column
-          :formatter="item => item.quantity * item.price"
+          :formatter="item => item.quantity * item.Product.price"
           label="總價"
           width="150"
         />
