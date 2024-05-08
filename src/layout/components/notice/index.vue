@@ -30,7 +30,7 @@ notices.value.map(v => (noticesNum.value += v.list.length));
         >
           <el-empty
             v-if="notices.length === 0"
-            description="暂无消息"
+            description="暫無消息"
             :image-size="60"
           />
           <span v-else>

@@ -45,6 +45,9 @@ app.component("FontIcon", FontIcon);
 import { Auth } from "@/components/ReAuth";
 app.component("Auth", Auth);
 
+import InfiniteLoading from "v3-infinite-loading";
+app.component("infinite-loading", InfiniteLoading);
+
 getServerConfig(app).then(async config => {
   app.use(router);
   await router.isReady();

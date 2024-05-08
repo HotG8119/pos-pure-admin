@@ -49,14 +49,12 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("login submit!!!", ruleForm);
       useUserStoreHook()
         .loginByUsername({
           username: ruleForm.username,
           password: ruleForm.password
         })
         .then(res => {
-          console.log("登入login res", res);
           if (res.success) {
             // 获取后端路由
             initRouter().then(() => {

@@ -4,10 +4,17 @@ const { VITE_HIDE_HOME } = import.meta.env;
 export const routerArrays: Array<RouteConfigs> =
   VITE_HIDE_HOME === "false"
     ? [
+        // {
+        //   path: "/welcome",
+        //   meta: {
+        //     title: "menus.hshome",
+        //     icon: "homeFilled"
+        //   }
+        // }
         {
-          path: "/welcome",
+          path: "/prepareOrder",
           meta: {
-            title: "menus.hshome",
+            title: "訂單準備",
             icon: "homeFilled"
           }
         }

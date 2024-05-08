@@ -178,7 +178,7 @@ onKeyStroke("ArrowDown", handleDown);
       <el-scrollbar ref="scrollbarRef" max-height="calc(90vh - 140px)">
         <el-empty
           v-if="resultOptions.length === 0"
-          description="暂无搜索结果"
+          description="暫無搜尋結果"
         />
         <SearchResult
           v-else

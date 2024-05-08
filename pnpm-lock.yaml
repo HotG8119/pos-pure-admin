@@ -71,6 +71,9 @@ dependencies:
   sortablejs:
     specifier: ^1.15.0
     version: 1.15.0
+  v3-infinite-loading:
+    specifier: ^1.3.1
+    version: 1.3.1
   vue:
     specifier: ^3.3.4
     version: 3.3.4
@@ -86,6 +89,9 @@ dependencies:
   vue-types:
     specifier: ^5.1.0
     version: 5.1.0(vue@3.3.4)
+  vue-waterfall-plugin-next:
+    specifier: ^2.4.3
+    version: 2.4.3(@types/lodash-es@4.17.7)(vue@3.3.4)
 
 devDependencies:
   "@commitlint/cli":
@@ -1279,6 +1285,17 @@ packages:
     engines: { node: ">=10" }
     dev: false
 
+  /@element-plus/icons-vue@1.1.4(vue@3.3.4):
+    resolution:
+      {
+        integrity: sha512-Iz/nHqdp1sFPmdzRwHkEQQA3lKvoObk8azgABZ81QUOpW9s/lUyQVUSh0tNtEPZXQlKwlSh7SPgoVxzrE0uuVQ==
+      }
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: 3.3.4
+    dev: false
+
   /@element-plus/icons-vue@2.1.0(vue@3.3.4):
     resolution:
       {
@@ -2386,6 +2403,13 @@ packages:
       }
     dev: true
 
+  /@types/web-bluetooth@0.0.14:
+    resolution:
+      {
+        integrity: sha512-5d2RhCard1nQUC3aHcq/gHzWYO6K0WJmAbjO7mQJgCQKtZpgXxv1rOM6O/dBDhDYYVutk1sciOgNSe+5YyfM8A==
+      }
+    dev: false
+
   /@types/web-bluetooth@0.0.16:
     resolution:
       {
@@ -2940,6 +2964,27 @@ packages:
       - vue
     dev: false
 
+  /@vueuse/core@8.9.4(vue@3.3.4):
+    resolution:
+      {
+        integrity: sha512-B/Mdj9TK1peFyWaPof+Zf/mP9XuGAngaJZBwPaXBvU3aCTZlx3ltlrFFFyMV4iGBwsjSCeUCgZrtkEj9dS2Y3Q==
+      }
+    peerDependencies:
+      "@vue/composition-api": ^1.1.0
+      vue: ^2.6.0 || ^3.2.0
+    peerDependenciesMeta:
+      "@vue/composition-api":
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      "@types/web-bluetooth": 0.0.14
+      "@vueuse/metadata": 8.9.4
+      "@vueuse/shared": 8.9.4(vue@3.3.4)
+      vue: 3.3.4
+      vue-demi: 0.14.5(vue@3.3.4)
+    dev: false
+
   /@vueuse/core@9.13.0(vue@3.3.4):
     resolution:
       {
@@ -2959,6 +3004,13 @@ packages:
     resolution:
       {
         integrity: sha512-IR7Mkq6QSgZ38q/2ZzOt+Zz1OpcEsnwE64WBumDQ+RGKrosFCtUA2zgRrOqDEzPBXrVB+4HhFkwDjQMu0fDBKw==
+      }
+    dev: false
+
+  /@vueuse/metadata@8.9.4:
+    resolution:
+      {
+        integrity: sha512-IwSfzH80bnJMzqhaapqJl9JRIiyQU0zsRGEgnxN6jhq7992cPUJIRfV+JHRIZXjYqbwt07E1gTEp0R0zPJ1aqw==
       }
     dev: false
 
@@ -3002,6 +3054,24 @@ packages:
     transitivePeerDependencies:
       - "@vue/composition-api"
       - vue
+    dev: false
+
+  /@vueuse/shared@8.9.4(vue@3.3.4):
+    resolution:
+      {
+        integrity: sha512-wt+T30c4K6dGRMVqPddexEVLa28YwxW5OFIPmzUHICjphfAuBFTTdDoyqREZNDOFJZ44ARH1WWQNCUK8koJ+Ag==
+      }
+    peerDependencies:
+      "@vue/composition-api": ^1.1.0
+      vue: ^2.6.0 || ^3.2.0
+    peerDependenciesMeta:
+      "@vue/composition-api":
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      vue: 3.3.4
+      vue-demi: 0.14.5(vue@3.3.4)
     dev: false
 
   /@vueuse/shared@9.13.0(vue@3.3.4):
@@ -4546,6 +4616,32 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /element-plus@2.1.4(@types/lodash-es@4.17.7)(vue@3.3.4):
+    resolution:
+      {
+        integrity: sha512-pcwgDbKUrzyWbixYB/zIbLPLBQ/NPGPJnGXJ+jYozUSthPW4SuriaUGJKgbAE6PDBAtw3IodiT2E2GbiaZLxww==
+      }
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      "@ctrl/tinycolor": 3.6.0
+      "@element-plus/icons-vue": 1.1.4(vue@3.3.4)
+      "@popperjs/core": 2.11.8
+      "@vueuse/core": 8.9.4(vue@3.3.4)
+      async-validator: 4.2.5
+      dayjs: 1.11.8
+      escape-html: 1.0.3
+      lodash: 4.17.21
+      lodash-es: 4.17.21
+      lodash-unified: 1.0.3(@types/lodash-es@4.17.7)(lodash-es@4.17.21)(lodash@4.17.21)
+      memoize-one: 6.0.0
+      normalize-wheel-es: 1.2.0
+      vue: 3.3.4
+    transitivePeerDependencies:
+      - "@types/lodash-es"
+      - "@vue/composition-api"
+    dev: false
 
   /element-plus@2.3.6(vue@3.3.4):
     resolution:
@@ -6138,6 +6234,7 @@ packages:
       {
         integrity: sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==
       }
+    requiresBuild: true
 
   /jsonfile@6.1.0:
     resolution:
@@ -10037,6 +10134,13 @@ packages:
     hasBin: true
     dev: true
 
+  /v3-infinite-loading@1.3.1:
+    resolution:
+      {
+        integrity: sha512-Yi/STWDo+jasQSd8sBCta2u5/C75eLWdTyqkUPOcCEWYFzzw0DddYrDfvjB2IEbcvFxNiA4ljBpNLcRLVe2adA==
+      }
+    dev: false
+
   /v8-compile-cache-lib@3.0.1:
     resolution:
       {
@@ -10279,6 +10383,21 @@ packages:
     dependencies:
       is-plain-object: 5.0.0
       vue: 3.3.4
+    dev: false
+
+  /vue-waterfall-plugin-next@2.4.3(@types/lodash-es@4.17.7)(vue@3.3.4):
+    resolution:
+      {
+        integrity: sha512-L2mH8wOn+ZuddPhaYHKljfukNM0iQd3vhjesvBK4ck+D5swS8c34VdlOED2w53QZvUrXQpEg9ASDHzLlLkzztg==
+      }
+    dependencies:
+      animate.css: 4.1.1
+      element-plus: 2.1.4(@types/lodash-es@4.17.7)(vue@3.3.4)
+      vue-router: 4.2.2(vue@3.3.4)
+    transitivePeerDependencies:
+      - "@types/lodash-es"
+      - "@vue/composition-api"
+      - vue
     dev: false
 
   /vue@3.3.4:

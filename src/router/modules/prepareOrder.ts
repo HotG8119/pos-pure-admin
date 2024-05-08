@@ -1,25 +1,24 @@
-import { $t } from "@/plugins/i18n";
-import { home } from "@/router/enums";
+import { prepareOrder } from "@/router/enums";
 const { VITE_HIDE_HOME } = import.meta.env;
 const Layout = () => import("@/layout/index.vue");
 
 export default {
   path: "/",
-  name: "Home",
+  name: "prepareOrder",
   component: Layout,
-  redirect: "/welcome",
+  redirect: "/prepareOrder",
   meta: {
     icon: "homeFilled",
-    title: $t("menus.hshome"),
-    rank: home
+    title: "準備訂單",
+    rank: prepareOrder
   },
   children: [
     {
-      path: "/welcome",
-      name: "Welcome",
-      component: () => import("@/views/welcome/index.vue"),
+      path: "/prepareOrder",
+      name: "prepareOrder",
+      component: () => import("@/views/prepareOrder/index.vue"),
       meta: {
-        title: $t("menus.hshome"),
+        title: "準備訂單",
         showLink: VITE_HIDE_HOME === "true" ? false : true
       }
     }

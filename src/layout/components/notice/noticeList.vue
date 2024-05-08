@@ -19,5 +19,5 @@ const props = defineProps({
       :key="index"
     />
   </div>
-  <el-empty v-else description="暂无数据" />
+  <el-empty v-else description="暫無資料" />
 </template>
