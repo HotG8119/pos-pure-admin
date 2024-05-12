@@ -220,7 +220,6 @@ export function useRole() {
       form: toRaw(form),
       ...pagination
     });
-    console.log("data GGG", data);
     dataList.value = data.list;
     dataList.value.forEach(item => {
       item.createdAt = dayjs(item.createdAt).format("HH:mm");

@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted, reactive, nextTick } from "vue";
+import { ElLoading, ElMessage, ElMessageBox } from "element-plus";
+
 import { getPrepareOrderList } from "./api";
 import { putOrderProduct, updateOrder } from "@/api/order";
 import error from "./error.png";
 import loading from "./loading.png";
-import { ElLoading, ElMessage, ElMessageBox } from "element-plus";
 import "vue-waterfall-plugin-next/dist/style.css";
-import { onMounted, reactive, ref, nextTick } from "vue";
 import backTop from "@/assets/svg/back_top.svg?component";
 import { Waterfall } from "vue-waterfall-plugin-next";
+import Empty from "./empty.svg?component";
+
+import { socket } from "@/socket.js";
 
 const options = reactive({
   // 唯一key值
@@ -47,7 +51,8 @@ const options = reactive({
   loadProps: {
     loading,
     error
-  }
+  },
+  align: "left"
   // 是否懒加载
   //lazyload: true
 });
@@ -81,7 +86,7 @@ async function handleLoad() {
   }
 }
 
-async function handleCompleted(item, index) {
+async function handleCompleted(item) {
   try {
     const isAllCompleted = item.OrderProducts.every(
       product => product.status === "completed"
@@ -99,11 +104,7 @@ async function handleCompleted(item, index) {
       );
     }
     await updateOrder(item.id, { title: "完成" });
-    ElMessage({
-      type: "success",
-      message: "訂單已完成"
-    });
-    orderList.value.splice(index, 1);
+    socket.emit("completedOrder", item.id);
   } catch (error) {
     ElMessage({
       type: "info",
@@ -112,16 +113,53 @@ async function handleCompleted(item, index) {
   }
 }
 
-function handleClick(row) {
+function handleFinishedProduct(row) {
   row.isStriked = !row.isStriked;
   putOrderProduct(row.id, {
     status: row.isStriked ? "completed" : "preparing"
   });
+  socket.emit("completedItem", row);
 }
 
+socket.on("completedItem", socketData => {
+  orderList.value.forEach(order => {
+    const product = order.OrderProducts.find(
+      product => product.id === socketData.id
+    );
+    if (product) {
+      product.isStriked = socketData.isStriked; // 更新 isStriked 屬性
+      product.status = socketData.status; // 可選：更新產品狀態
+    }
+  });
+});
+
+socket.on("completedOrder", itemId => {
+  const index = orderList.value.findIndex(order => order.id === itemId);
+  orderList.value.splice(index, 1);
+
+  ElMessage({
+    type: "success",
+    message: `訂單：${itemId} 已完成`
+  });
+});
+
+socket.on("newOrder", () => {
+  ElMessage({
+    type: "success",
+    message: "有新訂單進來了！"
+  });
+  setTimeout(() => {
+    handleLoad();
+  }, 1000);
+});
+
 onMounted(() => {
-  //handleLoadMore();
   handleLoad();
+  socket.on();
+});
+
+onUnmounted(() => {
+  socket.off();
 });
 </script>
 
@@ -145,7 +183,7 @@ onMounted(() => {
               <el-table
                 :data="item.OrderProducts"
                 style="width: 100%"
-                @row-click="handleClick"
+                @row-click="handleFinishedProduct"
                 row-key="id"
               >
                 <el-table-column prop="name" label="商品名" width="200">
@@ -165,27 +203,36 @@ onMounted(() => {
               </el-table>
             </div>
             <div
-              class="pt-3 flex justify-end items-center border-t border-t-gray-600 border-opacity-50"
+              class="pt-3 flex justify-between items-center border-t border-t-gray-600 border-opacity-50"
             >
-              <div>
-                <button
-                  class="px-3 h-7 rounded-full bg-red-500 text-sm text-white shadow-lg transition-all duration-300 hover:bg-red-600"
-                  @click.stop="handleCompleted(item, index)"
-                >
-                  完成訂單
-                </button>
-              </div>
+              <h3 class="text-gray-50">訂單編號：{{ item.id }}</h3>
+              <button
+                class="px-3 h-7 rounded-full bg-red-500 text-sm text-white shadow-lg transition-all duration-300 hover:bg-red-600"
+                @click.stop="handleCompleted(item, index)"
+              >
+                完成訂單
+              </button>
             </div>
           </div>
         </div>
       </template>
     </Waterfall>
+
+    <el-empty
+      description="暫無資料"
+      :image-size="60"
+      v-if="orderList.length === 0"
+    >
+      <template #image>
+        <Empty />
+      </template>
+    </el-empty>
     <div class="flex justify-center py-10">
       <button
         class="px-5 py-2 rounded-full bg-gray-700 text-md text-white cursor-pointer hover:bg-gray-800 transition-all duration-300"
         @click="handleLoad"
       >
-        重新加載
+        重新載入
       </button>
     </div>
 
