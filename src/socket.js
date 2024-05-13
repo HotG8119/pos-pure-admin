@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { io } from "socket.io-client";
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 export const state = reactive({
   connected: false,
@@ -8,8 +9,9 @@ export const state = reactive({
 });
 
 // "undefined" means the URL will be computed from the `window.location` object
-const URL =
-  process.env.NODE_ENV === "production" ? undefined : "http://localhost:3001";
+export const URL =
+  process.env.NODE_ENV === "production" ? BACKEND_URL : "http://localhost:3001";
+// export const URL = VUE_APP_BACKEND_URL;
 
 export const socket = io(URL);
 

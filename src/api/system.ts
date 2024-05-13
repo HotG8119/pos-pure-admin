@@ -25,8 +25,8 @@ type Result = {
 // export const getUserList = (data?: object) => {
 //   return http.request<ResultTable>("post", "/user", { data });
 // };
-export const getUserList = () => {
-  return http.request<Result>("get", baseUrlApi("users"));
+export const getUserList = (data: object) => {
+  return http.request<Result>("post", baseUrlApi("users"), { data });
 };
 
 export const signUp = (data: object) => {

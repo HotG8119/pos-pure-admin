@@ -10,6 +10,7 @@ import axios from "axios";
 import { genFileId } from "element-plus";
 import type { UploadProps, UploadRawFile } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -41,7 +42,7 @@ const uploadSubmit = async options => {
   formData.append("image", options["file"]);
 
   const res = await axios.post(
-    "http://localhost:3001/api/menu/products/upload",
+    `${BACKEND_URL}/api/menu/products/upload`,
     formData
   );
 

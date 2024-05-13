@@ -269,7 +269,6 @@ export function useUser(tableRef: Ref) {
       pageSize: pagination.pageSize,
       currentPage: pagination.currentPage
     });
-    console.log("data", data);
     dataList.value = data.list;
     pagination.total = data.total;
     pagination.pageSize = data.pageSize;

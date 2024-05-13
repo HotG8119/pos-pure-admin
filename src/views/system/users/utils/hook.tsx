@@ -1,35 +1,26 @@
 import "./reset.css";
-import dayjs from "dayjs";
+//import dayjs from "dayjs";
 // import roleForm from "../form/role.vue";
 import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
-import { handleTree } from "@/utils/tree";
+//import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 // import croppingUpload from "../upload.vue";
-import { usePublicHooks } from "../../hooks";
+//import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
-import type { FormItemProps, RoleFormItemProps } from "./types";
-import { hideTextAtIndex, getKeyList, isAllEmpty } from "@pureadmin/utils";
+import type { FormItemProps } from "./types";
+import { getKeyList, isAllEmpty } from "@pureadmin/utils";
 import {
   getUserList,
   signUp,
   patchUserInfo,
-  patchUserPassword
+  patchUserPassword,
+  switchUserRole,
+  deleteUser
 } from "@/api/system";
-// import {
-//   getRoleIds,
-//   getDeptList,
-//   getUserList,
-//   getAllRoleList
-// } from "@/api/system";
-import {
-  ElForm,
-  ElInput,
-  ElFormItem,
-  ElProgress,
-  ElMessageBox
-} from "element-plus";
+
+import { ElForm, ElInput, ElFormItem, ElProgress } from "element-plus";
 import {
   type Ref,
   h,
@@ -56,11 +47,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const dataList = ref([]);
   const loading = ref(true);
   // 上传头像信息
-  const avatarInfo = ref();
-  const switchLoadMap = ref({});
-  const { switchStyle } = usePublicHooks();
+  // const avatarInfo = ref();
+  // const switchLoadMap = ref({});
+  // const { switchStyle } = usePublicHooks();
   const higherDeptOptions = ref();
-  const treeData = ref([]);
+  //const treeData = ref([]);
   const treeLoading = ref(true);
   const selectedNum = ref(0);
   const pagination = reactive<PaginationProps>({
@@ -71,97 +62,45 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   });
   const columns: TableColumnList = [
     {
-      label: "勾选列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
-      fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
-    {
-      label: "用户编号",
+      label: "使用者ID",
       prop: "id",
-      width: 90
+      width: "130"
     },
     {
-      label: "用户头像",
-      prop: "avatar",
-      cellRenderer: ({ row }) => (
-        <el-image
-          fit="cover"
-          preview-teleported={true}
-          src={row.avatar}
-          preview-src-list={Array.of(row.avatar)}
-          class="w-[24px] h-[24px] rounded-full align-middle"
-        />
-      ),
-      width: 90
+      label: "姓名",
+      prop: "name",
+      width: "260"
     },
     {
-      label: "用户名称",
-      prop: "username",
-      minWidth: 130
+      label: "信箱",
+      prop: "email"
     },
     {
-      label: "用户昵称",
-      prop: "nickname",
-      minWidth: 130
-    },
-    {
-      label: "性别",
-      prop: "sex",
-      minWidth: 90,
-      cellRenderer: ({ row, props }) => (
-        <el-tag
-          size={props.size}
-          type={row.sex === 1 ? "danger" : null}
-          effect="plain"
-        >
-          {row.sex === 1 ? "女" : "男"}
-        </el-tag>
-      )
-    },
-    {
-      label: "部门",
-      prop: "dept.name",
-      minWidth: 90
-    },
-    {
-      label: "手机号码",
-      prop: "phone",
-      minWidth: 90,
-      formatter: ({ phone }) => hideTextAtIndex(phone, { start: 3, end: 6 })
-    },
-    {
-      label: "状态",
-      prop: "status",
-      minWidth: 90,
-      cellRenderer: scope => (
-        <el-switch
-          size={scope.props.size === "small" ? "small" : "default"}
-          loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
-          active-text="已启用"
-          inactive-text="已停用"
-          inline-prompt
-          style={switchStyle.value}
-          onChange={() => onChange(scope as any)}
-        />
-      )
-    },
-    {
-      label: "创建时间",
-      minWidth: 90,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      label: "管理員權限",
+      prop: "isAdmin",
+      width: "130"
     },
     {
       label: "操作",
+      width: "390",
       fixed: "right",
-      width: 180,
       slot: "operation"
     }
+
+    // {
+    //   label: "用户头像",
+    //   prop: "avatar",
+    //   cellRenderer: ({ row }) => (
+    //     <el-image
+    //       fit="cover"
+    //       preview-teleported={true}
+    //       src={row.avatar}
+    //       preview-src-list={Array.of(row.avatar)}
+    //       class="w-[24px] h-[24px] rounded-full align-middle"
+    //     />
+    //   ),
+    //   width: 90
+    // },
   ];
   const buttonClass = computed(() => {
     return [
@@ -185,65 +124,103 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   ];
   // 当前密码强度（0-4）
   const curScore = ref();
-  const roleOptions = ref([]);
+  // const roleOptions = ref([]);
 
-  function onChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
-      }</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
-      }</strong>用户吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true
+  // function onChange({ row, index }) {
+  //   ElMessageBox.confirm(
+  //     `确认要<strong>${
+  //       row.status === 0 ? "停用" : "启用"
+  //     }</strong><strong style='color:var(--el-color-primary)'>${
+  //       row.username
+  //     }</strong>用户吗?`,
+  //     "系统提示",
+  //     {
+  //       confirmButtonText: "确定",
+  //       cancelButtonText: "取消",
+  //       type: "warning",
+  //       dangerouslyUseHTMLString: true,
+  //       draggable: true
+  //     }
+  //   )
+  //     .then(() => {
+  //       switchLoadMap.value[index] = Object.assign(
+  //         {},
+  //         switchLoadMap.value[index],
+  //         {
+  //           loading: true
+  //         }
+  //       );
+  //       setTimeout(() => {
+  //         switchLoadMap.value[index] = Object.assign(
+  //           {},
+  //           switchLoadMap.value[index],
+  //           {
+  //             loading: false
+  //           }
+  //         );
+  //         message("已成功修改用户状态", {
+  //           type: "success"
+  //         });
+  //       }, 300);
+  //     })
+  //     .catch(() => {
+  //       row.status === 0 ? (row.status = 1) : (row.status = 0);
+  //     });
+  // }
+
+  async function handleSwitchRole(row) {
+    console.log("changeRole", row);
+    if (row.name === "admin") {
+      message("admin帳號不能切換權限", { type: "error" });
+      return;
+    }
+    try {
+      const res = await switchUserRole(row.id);
+      console.log("切換權限", res);
+      if (res.success) {
+        message(`ID：${row.id} 權限切換成功`, { type: "success" });
+        onSearch();
+        return;
       }
-    )
-      .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message("已成功修改用户状态", {
-            type: "success"
-          });
-        }, 300);
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
-      });
+      message(`ID：${row.id} 權限切換失敗`, { type: "error" });
+    } catch (err) {
+      message("切換權限錯誤", { type: "error" });
+    }
   }
 
   function handleUpdate(row) {
     console.log(row);
   }
 
-  function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
+  async function handleDelete(row) {
+    if (row.name === "admin") {
+      message("admin帳號不能被刪除", { type: "error" });
+      return;
+    }
+    try {
+      const res = await deleteUser(row.id);
+      if (res.success) {
+        message(`ID：${row.id} 使用者刪除成功`, { type: "success" });
+        return;
+      }
+      message(`ID：${row.id} 使用者刪除失敗`, { type: "error" });
+    } catch (err) {
+      message("使用者刪除錯誤", { type: "error" });
+    }
     onSearch();
   }
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    pagination.currentPage = 1;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -273,13 +250,16 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    console.log("on serch data before");
-    const { data } = await getUserList(toRaw(form));
-    console.log("on serch data after", data);
-    // dataList.value = data.list;
-    // pagination.total = data.total;
-    // pagination.pageSize = data.pageSize;
-    // pagination.currentPage = data.currentPage;
+    //const { data } = await getUserList(toRaw(form));
+    const { data } = await getUserList(toRaw(pagination));
+    dataList.value = data.list;
+    dataList.value.forEach((item: any) => {
+      item.isAdmin = item.isAdmin ? "是" : "否";
+    });
+
+    pagination.total = data.total;
+    pagination.pageSize = data.pageSize;
+    pagination.currentPage = data.currentPage;
 
     setTimeout(() => {
       loading.value = false;
@@ -312,7 +292,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function openDialog(title = "新增", row?: FormItemProps) {
-    console.log("open dialog row", row);
     addDialog({
       title: `${title}帳號`,
       props: {
@@ -358,11 +337,14 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             } else {
               // 实际开发先调用修改接口，再进行下面操作
               try {
+                if (curData.name === "admin") {
+                  message("帳號名稱不能被修改為 admin", { type: "error" });
+                  return;
+                }
                 const res = await patchUserInfo(row.id, curData);
                 if (res.success) {
                   chores();
                 } else {
-                  console.log("修改失敗", res);
                   message(`修改失敗，${res.message}`, { type: "error" });
                   done();
                 }
@@ -375,30 +357,29 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       }
     });
   }
-
-  const cropRef = ref();
+  // const cropRef = ref();
   /** 上传头像 */
-  function handleUpload(row) {
-    addDialog({
-      title: "裁剪、上传头像",
-      width: "40%",
-      draggable: true,
-      closeOnClickModal: false,
-      contentRenderer: () =>
-        h(croppingUpload, {
-          ref: cropRef,
-          imgSrc: row.avatar,
-          onCropper: info => (avatarInfo.value = info)
-        }),
-      beforeSure: done => {
-        console.log("裁剪后的图片信息：", avatarInfo.value);
-        // 根据实际业务使用avatarInfo.value和row里的某些字段去调用上传头像接口即可
-        done(); // 关闭弹框
-        onSearch(); // 刷新表格数据
-      },
-      closeCallBack: () => cropRef.value.hidePopover()
-    });
-  }
+  // function handleUpload(row) {
+  //   addDialog({
+  //     title: "裁剪、上传头像",
+  //     width: "40%",
+  //     draggable: true,
+  //     closeOnClickModal: false,
+  //     contentRenderer: () =>
+  //       h(croppingUpload, {
+  //         ref: cropRef,
+  //         imgSrc: row.avatar,
+  //         onCropper: info => (avatarInfo.value = info)
+  //       }),
+  //     beforeSure: done => {
+  //       console.log("裁剪后的图片信息：", avatarInfo.value);
+  //       // 根据实际业务使用avatarInfo.value和row里的某些字段去调用上传头像接口即可
+  //       done(); // 关闭弹框
+  //       onSearch(); // 刷新表格数据
+  //     },
+  //     closeCallBack: () => cropRef.value.hidePopover()
+  //   });
+  // }
 
   watch(
     pwdForm,
@@ -479,7 +460,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
               const res = await patchUserPassword(row.id, {
                 password: pwdForm.newPwd
               });
-              console.log("res,", res);
               if (!res.success) {
                 message(`重置失敗，${res.message}`, { type: "error" });
                 return;
@@ -500,45 +480,45 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   /** 分配角色 */
-  async function handleRole(row) {
-    // 选中的角色列表
-    const ids = (await getRoleIds({ userId: row.id })).data ?? [];
-    addDialog({
-      title: `分配 ${row.username} 用户的角色`,
-      props: {
-        formInline: {
-          username: row?.username ?? "",
-          nickname: row?.nickname ?? "",
-          roleOptions: roleOptions.value ?? [],
-          ids
-        }
-      },
-      width: "400px",
-      draggable: true,
-      fullscreenIcon: true,
-      closeOnClickModal: false,
-      contentRenderer: () => h(roleForm),
-      beforeSure: (done, { options }) => {
-        const curData = options.props.formInline as RoleFormItemProps;
-        console.log("curIds", curData.ids);
-        // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
-        done(); // 关闭弹框
-      }
-    });
-  }
+  // async function handleRole(row) {
+  //   // 选中的角色列表
+  //   const ids = (await getRoleIds({ userId: row.id })).data ?? [];
+  //   addDialog({
+  //     title: `分配 ${row.username} 用户的角色`,
+  //     props: {
+  //       formInline: {
+  //         username: row?.username ?? "",
+  //         nickname: row?.nickname ?? "",
+  //         roleOptions: roleOptions.value ?? [],
+  //         ids
+  //       }
+  //     },
+  //     width: "400px",
+  //     draggable: true,
+  //     fullscreenIcon: true,
+  //     closeOnClickModal: false,
+  //     contentRenderer: () => h(roleForm),
+  //     beforeSure: (done, { options }) => {
+  //       const curData = options.props.formInline as RoleFormItemProps;
+  //       console.log("curIds", curData.ids);
+  //       // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
+  //       done(); // 关闭弹框
+  //     }
+  //   });
+  // }
 
   onMounted(async () => {
     treeLoading.value = true;
     onSearch();
 
     // 归属部门
-    const { data } = await getDeptList();
-    higherDeptOptions.value = handleTree(data);
-    treeData.value = handleTree(data);
-    treeLoading.value = false;
+    // const { data } = await getDeptList();
+    // higherDeptOptions.value = handleTree(data);
+    // treeData.value = handleTree(data);
+    // treeLoading.value = false;
 
     // 角色列表
-    roleOptions.value = (await getAllRoleList()).data;
+    //roleOptions.value = (await getAllRoleList()).data;
   });
 
   return {
@@ -546,8 +526,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     loading,
     columns,
     dataList,
-    treeData,
-    treeLoading,
+    //treeData,
+    //treeLoading,
     selectedNum,
     pagination,
     buttonClass,
@@ -558,9 +538,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     onTreeSelect,
     handleUpdate,
     handleDelete,
-    handleUpload,
+    //handleUpload,
     handleReset,
-    handleRole,
+    //handleRole,
+    handleSwitchRole,
     handleSizeChange,
     onSelectionCancel,
     handleCurrentChange,

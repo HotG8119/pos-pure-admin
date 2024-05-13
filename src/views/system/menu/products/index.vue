@@ -45,7 +45,7 @@ const {
       :treeLoading="treeLoading"
       @tree-select="onTreeSelect"
     /> -->
-    <div class="w-[calc(100%-200px)]">
+    <div class="w-[calc(100%)]">
       <el-form
         ref="formRef"
         :inline="true"

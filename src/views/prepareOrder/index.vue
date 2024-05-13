@@ -154,6 +154,8 @@ socket.on("newOrder", () => {
 });
 
 onMounted(() => {
+  //console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+  //console.log("VUE_APP_BACKEND_URL", VUE_APP_BACKEND_URL);
   handleLoad();
   socket.on();
 });
@@ -170,7 +172,7 @@ onUnmounted(() => {
       v-bind="options"
       class="border-t border-b-gray-800"
     >
-      <template #item="{ item, index }">
+      <template #item="{ item }">
         <div
           class="bg-gray-900 rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-linear hover:shadow-lg hover:shadow-gray-600 group"
         >
@@ -208,7 +210,7 @@ onUnmounted(() => {
               <h3 class="text-gray-50">訂單編號：{{ item.id }}</h3>
               <button
                 class="px-3 h-7 rounded-full bg-red-500 text-sm text-white shadow-lg transition-all duration-300 hover:bg-red-600"
-                @click.stop="handleCompleted(item, index)"
+                @click.stop="handleCompleted(item)"
               >
                 完成訂單
               </button>
