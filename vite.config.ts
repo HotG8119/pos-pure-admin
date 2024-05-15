@@ -46,7 +46,8 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       proxy: {
         "/api": {
           // 这里填写后端地址
-          target: "http://127.0.0.1:3001/api",
+          target: "http://pos-api-dev.ap-northeast-3.elasticbeanstalk.com/api",
+          //target: 'http://127.0.0.1:3001',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, "")
         }
