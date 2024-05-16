@@ -23,8 +23,6 @@ import Lock from "@iconify-icons/ri/lock-fill";
 import Check from "@iconify-icons/ep/check";
 import User from "@iconify-icons/ri/user-3-fill";
 
-const { VITE_APP_BACKEND_URL } = import.meta.env;
-
 defineOptions({
   name: "Login"
 });
@@ -42,7 +40,7 @@ const { title, getDropdownItemStyle, getDropdownItemClass } = useNav();
 const { locale, translationCh, translationEn } = useTranslationLang();
 
 const ruleForm = reactive({
-  username: "admin",
+  username: "admin@example.com",
   password: "admin123"
 });
 
@@ -95,7 +93,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  後端:{{ VITE_APP_BACKEND_URL }}
   <div class="select-none">
     <img :src="bg" class="wave" />
     <div class="flex-c absolute right-5 top-3">

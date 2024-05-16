@@ -11,7 +11,7 @@ import backTop from "@/assets/svg/back_top.svg?component";
 import { Waterfall } from "vue-waterfall-plugin-next";
 import Empty from "./empty.svg?component";
 
-import { socket, state, URL } from "@/socket.js";
+import { socket } from "@/socket.js";
 
 const options = reactive({
   // 唯一key值
@@ -166,8 +166,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  {{ state }}
-  {{ URL }}
   <el-scrollbar max-height="calc(100vh - 90px)" class="content">
     <Waterfall
       :list="orderList"
