@@ -27,8 +27,13 @@ const __APP_INFO__ = {
 };
 
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
-  const { VITE_CDN, VITE_PORT, VITE_COMPRESSION, VITE_PUBLIC_PATH } =
-    warpperEnv(loadEnv(mode, root));
+  const {
+    VITE_CDN,
+    VITE_PORT,
+    VITE_COMPRESSION,
+    VITE_PUBLIC_PATH,
+    VITE_APP_BACKEND_URL
+  } = warpperEnv(loadEnv(mode, root));
   return {
     base: VITE_PUBLIC_PATH,
     root,
@@ -46,7 +51,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       proxy: {
         "/api": {
           // 这里填写后端地址
-          target: "http://127.0.0.1:3001/api",
+          target: `${VITE_APP_BACKEND_URL}/api`,
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, "")
         }
