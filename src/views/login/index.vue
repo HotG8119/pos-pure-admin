@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  {{ VITE_APP_BACKEND_URL }}
+  後端:{{ VITE_APP_BACKEND_URL }}
   <div class="select-none">
     <img :src="bg" class="wave" />
     <div class="flex-c absolute right-5 top-3">
