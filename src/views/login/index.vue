@@ -23,6 +23,8 @@ import Lock from "@iconify-icons/ri/lock-fill";
 import Check from "@iconify-icons/ep/check";
 import User from "@iconify-icons/ri/user-3-fill";
 
+const { VITE_APP_BACKEND_URL } = import.meta.env;
+
 defineOptions({
   name: "Login"
 });
@@ -93,6 +95,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  {{ VITE_APP_BACKEND_URL }}
   <div class="select-none">
     <img :src="bg" class="wave" />
     <div class="flex-c absolute right-5 top-3">
