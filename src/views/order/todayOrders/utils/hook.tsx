@@ -213,31 +213,35 @@ export function useRole() {
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
   }
-
   async function onSearch() {
     loading.value = true;
+
     const { data } = await getTodayOrders({
       form: toRaw(form),
       ...pagination
     });
-    dataList.value = data.list;
-    dataList.value.forEach(item => {
-      item.createdAt = dayjs(item.createdAt).format("HH:mm");
-      item.completedAt = item.completedAt
-        ? dayjs(item.completedAt).format("HH:mm")
-        : null;
-      item.paidAt = item.paidAt ? dayjs(item.paidAt).format("HH:mm") : null;
-      if (!item.completedAt) {
-        item.status = "未完成";
-      } else if (!item.paidAt) {
-        item.status = "未付款";
-      } else {
-        item.status = "已完成";
-      }
+
+    dataList.value = data.list
+      .sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix())
+      .map(item => ({
+        ...item,
+        createdAt: dayjs(item.createdAt).format("HH:mm"),
+        completedAt: item.completedAt
+          ? dayjs(item.completedAt).format("HH:mm")
+          : null,
+        paidAt: item.paidAt ? dayjs(item.paidAt).format("HH:mm") : null,
+        status: !item.completedAt
+          ? "未完成"
+          : !item.paidAt
+          ? "未付款"
+          : "已完成"
+      }));
+
+    Object.assign(pagination, {
+      total: data.total,
+      pageSize: data.pageSize,
+      currentPage: data.currentPage
     });
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
 
     setTimeout(() => {
       loading.value = false;

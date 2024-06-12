@@ -184,7 +184,7 @@ const confirmClick = () => {
     </div>
 
     <div>
-      <el-drawer v-model="cartDrawer" direction="rtl">
+      <el-drawer v-model="cartDrawer" direction="rtl" size="70%">
         <template #header>
           <h4>購物車清單</h4>
         </template>
@@ -203,21 +203,25 @@ const confirmClick = () => {
             />
           </el-select>
           <el-table :data="cartItems" stripe style="width: 100%">
-            <el-table-column prop="product.name" label="名稱" width="180" />
-            <el-table-column prop="product.price" label="單價" width="100" />
+            <el-table-column prop="product.name" label="名稱" />
+            <el-table-column prop="product.price" label="單價" />
             <el-table-column prop="orderQuantity" label="數量">
               <template #default="scope">
-                <el-input-number
-                  v-model="scope.row.orderQuantity"
-                  :min="1"
-                  :max="20"
-                />
-                <el-button
-                  type="text"
-                  :icon="Delete"
-                  circle
-                  @click="removeItem(scope.$index, scope.row)"
-                />
+                <div class="flex items-center space-x-2">
+                  <el-input-number
+                    v-model="scope.row.orderQuantity"
+                    :min="1"
+                    :max="20"
+                    class="w-20"
+                  />
+                  <el-button
+                    type="text"
+                    :icon="Delete"
+                    circle
+                    @click="removeItem(scope.$index, scope.row)"
+                    class="flex-shrink-0"
+                  />
+                </div>
               </template>
             </el-table-column>
           </el-table>

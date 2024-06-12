@@ -88,6 +88,7 @@ async function handleLoad() {
 
 async function handleCompleted(item) {
   try {
+    console.log("item.OrderProducts", item.OrderProducts);
     const isAllCompleted = item.OrderProducts.every(
       product => product.status === "completed"
     );
@@ -115,13 +116,15 @@ async function handleCompleted(item) {
 
 function handleFinishedProduct(row) {
   row.isStriked = !row.isStriked;
-  putOrderProduct(row.id, {
-    status: row.isStriked ? "completed" : "preparing"
-  });
+  row.status = row.isStriked ? "completed" : "preparing";
+
+  putOrderProduct(row.id, { status: row.status });
+
   socket.emit("completedItem", row);
 }
 
 socket.on("completedItem", socketData => {
+  //console.log("socketData", socketData);
   orderList.value.forEach(order => {
     const product = order.OrderProducts.find(
       product => product.id === socketData.id
